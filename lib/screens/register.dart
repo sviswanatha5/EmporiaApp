@@ -73,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.blue[400],
       body: SafeArea(
         child: Center(
             child: SingleChildScrollView(
@@ -94,7 +94,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 'Let\'s create an account',
                 textDirection: TextDirection.ltr,
                 style: TextStyle(
-                  color: Color.fromARGB(255, 101, 100, 100),
+                  color: Colors.black,
                   fontSize: 16,
                 ),
               ),
@@ -142,7 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Expanded(
                       child: Divider(
-                        color: Color.fromARGB(255, 97, 93, 93),
+                        color: Colors.black,
                         thickness: 0.5,
                       ),
                     ),
@@ -151,12 +151,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Text(
                         'Or continue with',
                         style:
-                            TextStyle(color: Color.fromARGB(255, 66, 65, 65)),
+                            TextStyle(color: Colors.black),
                       ),
                     ),
                     Expanded(
                       child: Divider(
-                        color: Color.fromARGB(255, 97, 93, 93),
+                        color: Colors.black,
                         thickness: 0.5,
                       ),
                     ),
@@ -178,14 +178,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // end of UI, asks for registration
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 const Text('Already have an account? ',
-                    style: TextStyle(color: Color.fromARGB(255, 97, 93, 93))),
+                    style: TextStyle(color: Colors.black)),
                 const SizedBox(width: 4),
                 GestureDetector(
                   onTap: widget.onTap,
                   child: const Text(
                     'Login Now',
                     style: TextStyle(
-                        color: Color.fromARGB(255, 21, 101, 192),
+                        color: Color.fromARGB(255, 47, 5, 65),
                         fontWeight: FontWeight.bold),
                   ),
                 ),
