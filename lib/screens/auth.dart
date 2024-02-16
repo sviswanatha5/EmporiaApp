@@ -1,6 +1,6 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
-import "package:practice_project/screens/first_screen.dart";
+import 'package:practice_project/screens/dashboard_screen.dart';
 import "package:practice_project/screens/loginOrRegister.dart";
 
 class AuthPage extends StatelessWidget {
@@ -13,7 +13,7 @@ class AuthPage extends StatelessWidget {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return const FirstScreen();
+                return const DashboardScreen();
               } else {
                 return const LoginOrRegisterScreen();
               }
