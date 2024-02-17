@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:practice_project/components/like_product.dart';
 import 'package:practice_project/screens/product_page.dart';
 
-class SquareTileProduct extends StatelessWidget {
+import "package:practice_project/dashboard_widgets/favorites.dart";
+
+class SquareTileProduct extends StatefulWidget {
   final Product product;
   final Function()? onTap;
   const SquareTileProduct(
       {super.key, required this.product, required this.onTap});
 
   @override
+  State<SquareTileProduct> createState() => _SquareTileProductState();
+}
+
+class _SquareTileProductState extends State<SquareTileProduct> {
+  bool liked = false;
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: onTap,
+        onTap: widget.onTap,
         child: Container(
           height: 200,
           width: 200,
@@ -20,7 +30,7 @@ class SquareTileProduct extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             color: Colors.grey[700],
             image: DecorationImage(
-              image: AssetImage(product.images.first),
+              image: AssetImage(widget.product.images.first),
               fit: BoxFit.fill,
             ),
           ),
@@ -29,7 +39,7 @@ class SquareTileProduct extends StatelessWidget {
             children: [
               // Image
               Image.asset(
-                product.images.first,
+                widget.product.images.first,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -45,8 +55,9 @@ class SquareTileProduct extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      LikeButton(liked: liked, onTap: () => {toggleLike()}),
                       Text(
-                        product.name,
+                        widget.product.name,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
@@ -54,7 +65,7 @@ class SquareTileProduct extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '\$${naturalPrices(product.price)}', // Assuming 'price' is a property of the Product class
+                        '\$${naturalPrices(widget.product.price)}', // Assuming 'price' is a property of the Product class
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14.0,
@@ -89,6 +100,17 @@ class SquareTileProduct extends StatelessWidget {
         // ),
 
         );
+  }
+
+  void toggleLike() {
+    setState(() {
+      if (liked == false) {
+        addFavorite(widget.product);
+      } else {
+        removeFavorite(widget.product);
+      }
+      liked = !liked;
+    });
   }
 }
 

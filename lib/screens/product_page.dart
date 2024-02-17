@@ -3,18 +3,23 @@ import 'package:practice_project/components/product_tile.dart';
 import "package:practice_project/components/product_button.dart";
 
 class Product {
+  final String id;
   final String name;
   final String description;
   final double price;
   final List<String> images;
   final String vendor;
+  bool isLiked;
 
-  Product(
-      {required this.name,
-      required this.description,
-      required this.price,
-      required this.images,
-      required this.vendor});
+  Product({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.images,
+    required this.vendor,
+    required this.isLiked,
+  });
 }
 
 class ProductPage extends StatelessWidget {
@@ -22,36 +27,46 @@ class ProductPage extends StatelessWidget {
 
   final List<Product> products = [
     Product(
+        id: "p1",
         name: 'Temu bag',
         description: 'Great temu bag from temu',
         price: 29.99,
         images: ['lib/images/bag.png'],
-        vendor: 'Temu'),
+        vendor: 'Temu',
+        isLiked: false),
     Product(
+        id: "p2",
         name: 'New Bike',
         description: 'Bike for sale, ',
         price: 120,
         images: ['lib/images/bike.png'],
-        vendor: 'Adrian'),
+        vendor: 'Adrian',
+        isLiked: false),
     Product(
+        id: "p3",
         name: 'Used Camera',
         description:
             'Selling cannon model x, no battery, willing to give SD card',
         price: 95,
         images: ['lib/images/camera.png'],
-        vendor: 'Joe'),
+        vendor: 'Joe',
+        isLiked: false),
     Product(
+        id: "p4",
         name: 'Thrifted Shirt',
         description: 'Dope design, size M, willing to negotiate price',
         price: 25,
         images: ['lib/images/shirt.png'],
-        vendor: 'Jill'),
+        vendor: 'Jill',
+        isLiked: false),
     Product(
+      id: "p5",
         name: 'Used e Scooter',
         description: 'Used e scooter, still in good conditon, up to 15mph',
         price: 70,
         images: ['lib/images/scooter.png'],
-        vendor: 'test@gmail.com'),
+        vendor: 'test@gmail.com',
+        isLiked: false),
   ];
 
   @override
@@ -60,22 +75,6 @@ class ProductPage extends StatelessWidget {
       body: ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
-          const SizedBox(height: 30);
-
-          /*
-          return SquareTile(
-            product: products[index],
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProductDetailScreen(products[index]),
-                ),
-              );
-            },
-          );
-          */
-
           return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             SquareTileProduct(
               product: products[index],
@@ -149,7 +148,7 @@ class ProductDetailScreen extends StatelessWidget {
 
           const SizedBox(height: 100),
 
-          MyButton(onTap: () => {}, text: "Buy Now"),
+          MyButton(onTap: () => {}, text: "Connect"),
         ],
       ),
     );
