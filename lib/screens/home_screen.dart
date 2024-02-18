@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_project/components/my_button.dart';
 import 'package:practice_project/components/my_test_field.dart';
@@ -25,6 +26,17 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
+
+      FirebaseAuth user = FirebaseAuth.instance;
+
+      FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.currentUser?.uid)
+            .set({
+          'uid': user.currentUser?.uid,
+          'email': user.currentUser!.email,
+        }, SetOptions(merge: true));
+
     } on FirebaseAuthException catch (exception) {
       wrongInputMessage("Wrong email or password");
     }
