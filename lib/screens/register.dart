@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:practice_project/components/my_button.dart';
@@ -38,6 +39,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (passwordController.text == confirmPasswordController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
+
+        FirebaseAuth user = FirebaseAuth.instance;
+
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.currentUser?.uid)
+            .set({
+          'uid': user.currentUser?.uid,
+          'email': user.currentUser!.email,
+        });
       } else {
         //show error message that passwords aren't the same
         wrongInputMessage("Passwords don't match");
@@ -52,8 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         //print('Wrong password');
 
         wrongInputMessage("Wrong password");
-      }
-      else{
+      } else {
         wrongInputMessage("Wrong email or password");
       }
     }
@@ -134,8 +144,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 30),
 
-              
-
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -150,8 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 10.0),
                       child: Text(
                         'Or continue with',
-                        style:
-                            TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                     Expanded(
@@ -169,11 +176,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // For google sign in
 
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                SquareTile(imagePath: 'lib/images/google.png', onTap: () => AuthService().signInGoogle()),
+                SquareTile(
+                    imagePath: 'lib/images/google.png',
+                    onTap: () => AuthService().signInGoogle()),
               ]),
 
               const SizedBox(height: 15),
-
 
               // end of UI, asks for registration
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
