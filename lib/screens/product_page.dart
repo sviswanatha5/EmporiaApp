@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 import 'package:practice_project/components/product_tile.dart';
 import "package:practice_project/components/product_button.dart";
@@ -23,7 +24,47 @@ class Product {
 }
 
 class ProductPage extends StatelessWidget {
-  ProductPage({super.key});
+  ProductPage({Key? key}) : super(key: key) {
+    stream = products.snapshots();
+  }
+
+  late Stream<QuerySnapshot> stream;
+
+  final CollectionReference products =
+      FirebaseFirestore.instance.collection('products');
+
+  //retrieve all products from Firestore
+
+  Future<List<Product>> getProducts() async {
+    QuerySnapshot querySnapshot = await products.get();
+
+    List<Product> productList = [];
+
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
+      productList.add(Product(
+        description: data['description'],
+        id: data['id'],
+        price: data['price'],
+        name: data['name'],
+        images: data['images'],
+        isLiked: data['isLiked'],
+        vendor: data['vendor'],
+      ));
+    }
+
+    return productList;
+  }
+
+  Future<void> loadProducts() async {
+    List<Product> loadedProducts = await getProducts();
+    loadedProductList = loadedProducts;
+  }
+
+  List<Product> loadedProductList = [];
+
+  /* 
 
   final List<Product> products = [
     Product(
@@ -69,20 +110,79 @@ class ProductPage extends StatelessWidget {
         isLiked: false),
   ];
 
+  */
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        body: StreamBuilder<QuerySnapshot>(
+            stream: stream,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasError) {
+                return const Center(child: Text('Some error occured'));
+              }
+
+              if (snapshot.hasData) {
+                QuerySnapshot querySnapshot = snapshot.data;
+                List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+
+                List<Product> items = documents.map((data) {
+                  return Product(
+                    id: data['id'],
+                    name: data['name'],
+                    description: data['description'],
+                    price: data['price'].toDouble(), // Assuming 'price' is stored as a double
+                    images: List<String>.from(data['images']),
+                    isLiked: data['isLiked'],
+                    vendor: data['vendor'],
+                  );
+                }).toList();
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      SquareTileProduct(
+                        product: items[index],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductDetailScreen(items[index]),
+                            ),
+                          );
+                        },
+                      ),
+                    ]);
+                  },
+                );
+              }
+
+              return const Center(child: CircularProgressIndicator());
+            }));
+  }
+
+}
+
+  /*
+  
+
+  @override
+  Widget build(BuildContext context) {
+    loadProducts();
+    return Scaffold(
       body: ListView.builder(
-        itemCount: products.length,
+        itemCount: loadedProductList.length,
         itemBuilder: (context, index) {
           return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             SquareTileProduct(
-              product: products[index],
+              product: loadedProductList[index],
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProductDetailScreen(products[index]),
+                    builder: (context) =>
+                        ProductDetailScreen(loadedProductList[index]),
                   ),
                 );
               },
@@ -110,7 +210,8 @@ class ProductPage extends StatelessWidget {
       ),
     );
   }
-}
+  */
+
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
@@ -123,34 +224,39 @@ class ProductDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(product.name),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(product.images.first),
-          // Display more pictures here using product.images
-          // Use Image.network or Image.asset depending on where your images are located
-          Text(
-            'Price: \$${naturalPrices(product.price)}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Description: ${product.description}',
-            style: const TextStyle(fontSize: 16),
-          ),
+      body: SingleChildScrollView(
 
-          const SizedBox(height: 10),
-          Text(
-            'Contact: ${product.vendor}',
-            style: const TextStyle(fontSize: 16),
-          ),
-          // Add more details as needed
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(product.images.first),
+            // Display more pictures here using product.images
+            // Use Image.network or Image.asset depending on where your images are located
+            Text(
+              'Price: \$${naturalPrices(product.price)}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Description: ${product.description}',
+              style: const TextStyle(fontSize: 16),
+            ),
 
-          const SizedBox(height: 100),
+            const SizedBox(height: 10),
+            Text(
+              'Contact: ${product.vendor}',
+              style: const TextStyle(fontSize: 16),
+            ),
+            // Add more details as needed
 
-          MyButton(onTap: () => {}, text: "Connect"),
-        ],
+            const SizedBox(height: 100),
+
+            MyButton(onTap: () => {}, text: "Connect"),
+          ],
       ),
+
+      ),
+      
     );
   }
 }

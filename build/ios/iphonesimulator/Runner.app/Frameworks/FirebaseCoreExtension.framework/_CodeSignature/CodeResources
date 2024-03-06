@@ -4,13 +4,44 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>FirebaseCoreExtension_Privacy.bundle/Info.plist</key>
+		<data>
+		JRwBzdht52hU/kFJNW/bmvanwPQ=
+		</data>
+		<key>FirebaseCoreExtension_Privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<data>
+		6iBlSEWzrD6zouHx4NqeDhjKSGQ=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		5rWWcMEUUp86kpyxMv2FwTfnmH4=
+		hxJJneLyquh5TkygX49dE+fTjX8=
 		</data>
 	</dict>
 	<key>files2</key>
-	<dict/>
+	<dict>
+		<key>FirebaseCoreExtension_Privacy.bundle/Info.plist</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			JRwBzdht52hU/kFJNW/bmvanwPQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			5FNtceM1BnE44UK0J8V+gAw07mkXZ2SEyx0tf9p6LhE=
+			</data>
+		</dict>
+		<key>FirebaseCoreExtension_Privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6iBlSEWzrD6zouHx4NqeDhjKSGQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			E3fszt/4+DIPeAQOnJ0+F+zA6laVlLVq8O8XvkQZfHo=
+			</data>
+		</dict>
+	</dict>
 	<key>rules</key>
 	<dict>
 		<key>^.*</key>
