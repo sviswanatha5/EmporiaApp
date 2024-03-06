@@ -38,13 +38,12 @@ class _SquareTileProductState extends State<SquareTileProduct> {
             fit: StackFit.expand,
             children: [
               // Image
-              Image.asset(
-                widget.product.images.first,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
+              Image.network(
+                widget.product.images.first ,
+                fit: BoxFit.cover
               ),
               // Text overlay
+
               Positioned(
                 bottom: 0,
                 left: 0,

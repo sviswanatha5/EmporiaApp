@@ -4,6 +4,14 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>FirebaseFirestoreInternal_Privacy.bundle/Info.plist</key>
+		<data>
+		trpP3rqmSfy4EbMadp5cuxDjwos=
+		</data>
+		<key>FirebaseFirestoreInternal_Privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<data>
+		WXQUJr75eMRgiVnLGyf8Gr3uLUU=
+		</data>
 		<key>Headers/FIRAggregateField.h</key>
 		<data>
 		XQdzKjU0Z0U7eZhMTeOvL72ZRIk=
@@ -98,7 +106,7 @@
 		</data>
 		<key>Headers/FIRTimestamp.h</key>
 		<data>
-		hP3FmCYW5wt9zBtEzEFSO/hHl4k=
+		VH7mtaFAYnYbSnfU4qVna2CEsFc=
 		</data>
 		<key>Headers/FIRTransaction.h</key>
 		<data>
@@ -122,7 +130,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		6763goVr3sbcFrPwiNFZjXGBxtA=
+		Nui2GYo5j8LXGqL0mexgmSLqsv0=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -131,6 +139,20 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>FirebaseFirestoreInternal_Privacy.bundle/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			eVBx3T0Bb+RR451hz3ww2JnNQtOR8fGcWB9+w0sjrkg=
+			</data>
+		</dict>
+		<key>FirebaseFirestoreInternal_Privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			z7s8T3ambVNpi66R9xEMAPIUjm5vE619MlkpCbwBDlE=
+			</data>
+		</dict>
 		<key>Headers/FIRAggregateField.h</key>
 		<dict>
 			<key>hash2</key>
@@ -296,7 +318,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Dhuct3YLwSPeYF5W68HYO8JMNUATav/JIgiEF2nakb0=
+			PqAUw+yt5mqnliwNfDvAo7iGIF94Qe6QV4ATUkudGbk=
 			</data>
 		</dict>
 		<key>Headers/FIRTransaction.h</key>

@@ -70,11 +70,19 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		Vn8X9YJShZ2iL/g/GPiKW7Qo8qc=
+		1BuPbdjeJe585yjvXV0JVjJqmJc=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
 		XiHCOtoll/P1GzSxgvvpGO9wfas=
+		</data>
+		<key>leveldb_Privacy.bundle/Info.plist</key>
+		<data>
+		1DtH3zkj14fq2UWjAm8c+SXboj0=
+		</data>
+		<key>leveldb_Privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<data>
+		JTGYQTSkuJ7uGfD1SfjQTq3ngyk=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -196,6 +204,20 @@
 			<key>hash2</key>
 			<data>
 			UhsTreyByDiflo1WFAwMQxhr4c0Lj0qYWd7aWmklhUc=
+			</data>
+		</dict>
+		<key>leveldb_Privacy.bundle/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MHNrGRf2qOnrLjKTrq7bH1UVriVWONR+D3J9izceGzQ=
+			</data>
+		</dict>
+		<key>leveldb_Privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CsAKC37/AHnc4lLimrQdcc9YxslP5OROoRDO9cYpcOE=
 			</data>
 		</dict>
 	</dict>

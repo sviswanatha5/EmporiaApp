@@ -1,5 +1,6 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:practice_project/dashboard_widgets/add_product.dart";
 import "package:practice_project/dashboard_widgets/favorites.dart";
 import "package:practice_project/dashboard_widgets/profile.dart";
 import "package:practice_project/dashboard_widgets/searchbar.dart";
@@ -80,7 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 
   List<Widget> get widgetOptions =>
-      [ProductPage(), const SearchBarWidget(), FavoriteProducts(), ProfileWidget()];
+      [ProductPage(), const SearchBarWidget(), FavoriteProducts(), AddProduct(),  ProfileWidget()];
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +108,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             label: 'Favorites',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.add_box_outlined),
+            label: 'Sell',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_rounded),
             label: 'Profile',
           ),
         ],
