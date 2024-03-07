@@ -41,6 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             email: emailController.text, password: passwordController.text);
 
         FirebaseAuth user = FirebaseAuth.instance;
+        List<bool> preferences = List.generate(9, (index) => false);
 
         FirebaseFirestore.instance
             .collection('users')
@@ -48,6 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .set({
           'uid': user.currentUser?.uid,
           'email': user.currentUser!.email,
+          'preferences': preferences,
         });
       } else {
         //show error message that passwords aren't the same
@@ -113,35 +115,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               //username
 
-              MyTextField(
-                controller: emailController,
-                hintText: 'Email',
-                obscureText: false,
-              ),
+                MyTextField(
+                  controller: emailController,
+                  hintText: 'Email',
+                  obscureText: false,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration( // Add some styling to input decoration
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Email',
+                  ),
+                ),
 
               //password
 
               const SizedBox(height: 10),
 
-              MyTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-              ),
+                MyTextField(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration( // Add some styling to input decoration
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Password',
+                  ),
+                ),
 
               const SizedBox(height: 10),
 
               //confirm password
-              MyTextField(
-                controller: confirmPasswordController,
-                hintText: 'Confirm Password',
-                obscureText: true,
-              ),
+                MyTextField(
+                  controller: confirmPasswordController,
+                  hintText: 'Confirm Password',
+                  obscureText: true,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration( // Add some styling to input decoration
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Confirm Password',
+                  ),
+                ),
+
 
               const SizedBox(height: 25),
-
-              MyButton(onTap: () => {signUserUp()}, text: "Sign Up"),
-
+                MyButton(
+                  //onTap: () => {signUserUp()}
+                  onTap: signUserUp,
+                  text: "Sign Up",
+                  color: Colors.purple,
+                  textColor: Colors.white,
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.purpleAccent),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(vertical: 16.0),
+                    ),
+                  ),
+                ),
               const SizedBox(height: 30),
 
               const Padding(
