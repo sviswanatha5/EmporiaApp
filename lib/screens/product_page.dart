@@ -2,6 +2,8 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 import 'package:practice_project/components/product_tile.dart';
 import "package:practice_project/components/product_button.dart";
+import "package:practice_project/dashboard_widgets/add_product.dart";
+import "package:practice_project/screens/chat_screen.dart";
 
 class Product {
   final String id;
@@ -115,6 +117,20 @@ class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) {
+                  return AddProduct();
+                },
+                fullscreenDialog: true,
+              ),
+            );
+          },
+          icon: const Icon(Icons.add_box_outlined),
+          label: const Text("List New Item"),
+        ),
         body: StreamBuilder<QuerySnapshot>(
             stream: stream,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -131,7 +147,8 @@ class ProductPage extends StatelessWidget {
                     id: data['id'],
                     name: data['name'],
                     description: data['description'],
-                    price: data['price'].toDouble(), // Assuming 'price' is stored as a double
+                    price: data['price']
+                        .toDouble(), // Assuming 'price' is stored as a double
                     images: List<String>.from(data['images']),
                     isLiked: data['isLiked'],
                     vendor: data['vendor'],
@@ -140,20 +157,22 @@ class ProductPage extends StatelessWidget {
                 return ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, index) {
-                    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      SquareTileProduct(
-                        product: items[index],
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ProductDetailScreen(items[index]),
-                            ),
-                          );
-                        },
-                      ),
-                    ]);
+                    return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SquareTileProduct(
+                            product: items[index],
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductDetailScreen(items[index]),
+                                ),
+                              );
+                            },
+                          ),
+                        ]);
                   },
                 );
               }
@@ -161,10 +180,9 @@ class ProductPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }));
   }
-
 }
 
-  /*
+/*
   
 
   @override
@@ -212,7 +230,6 @@ class ProductPage extends StatelessWidget {
   }
   */
 
-
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
 
@@ -225,7 +242,6 @@ class ProductDetailScreen extends StatelessWidget {
         title: Text(product.name),
       ),
       body: SingleChildScrollView(
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -251,12 +267,15 @@ class ProductDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 100),
 
-            MyButton(onTap: () => {}, text: "Connect"),
+            MyButton(
+                onTap: () => {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => const ChatScreen(userId: "2"))),
+                    },
+                text: "Connect"),
           ],
+        ),
       ),
-
-      ),
-      
     );
   }
 }

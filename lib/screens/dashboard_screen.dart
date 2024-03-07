@@ -4,6 +4,7 @@ import "package:practice_project/dashboard_widgets/add_product.dart";
 import "package:practice_project/dashboard_widgets/favorites.dart";
 import "package:practice_project/dashboard_widgets/profile.dart";
 import "package:practice_project/dashboard_widgets/searchbar.dart";
+import "package:practice_project/screens/messages_screen.dart";
 import "package:practice_project/screens/product_page.dart";
 /*
 class FirstScreen extends StatelessWidget {
@@ -72,16 +73,14 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
-  
-  
 
-  
-
-
-
-
-  List<Widget> get widgetOptions =>
-      [ProductPage(), const SearchBarWidget(), FavoriteProducts(), AddProduct(),  ProfileWidget()];
+  List<Widget> get widgetOptions => [
+        ProductPage(),
+        const SearchBarWidget(),
+        FavoriteProducts(),
+        MessagesScreen(),
+        ProfileWidget()
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -108,8 +107,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             label: 'Favorites',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_box_outlined),
-            label: 'Sell',
+            icon: Icon(Icons.chat_bubble_outlined),
+            label: 'Messages',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_rounded),
