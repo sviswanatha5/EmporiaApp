@@ -1,0 +1,15 @@
+.dart_tool/
+build/
+pubspec.lock  # Except for application packages
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Mac
+.DS_Store
+
+.flutter-plugins
+.flutter-plugins-dependencies
