@@ -642,7 +642,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.24)
   - camera_avfoundation (0.0.1):
     - Flutter
-  - cloud_firestore (4.15.7):
+  - cloud_firestore (4.15.8):
     - Firebase/Firestore (= 10.22.0)
     - firebase_core
     - Flutter
@@ -658,14 +658,14 @@ PODS:
   - Firebase/Storage (10.22.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 10.22.0)
-  - firebase_auth (4.17.7):
+  - firebase_auth (4.17.8):
     - Firebase/Auth (= 10.22.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.26.0):
+  - firebase_core (2.27.0):
     - Firebase/CoreOnly (= 10.22.0)
     - Flutter
-  - firebase_storage (11.6.8):
+  - firebase_storage (11.6.9):
     - Firebase/Storage (= 10.22.0)
     - firebase_core
     - Flutter
@@ -907,11 +907,11 @@ SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera_avfoundation: 759172d1a77ae7be0de08fc104cfb79738b8a59e
-  cloud_firestore: 204a2db57e7249e0cbbeee32d510580280b13016
+  cloud_firestore: 97e80651e196c32554cedcd31858b9615ac8a704
   Firebase: 797fd7297b7e1be954432743a0b3f90038e45a71
-  firebase_auth: cd5d79ba9a9a81151066d75f7cc8f6e698e33ed9
-  firebase_core: 8e100adc478919c6f3224f854ce8fa0bd98e36fd
-  firebase_storage: 5809616b52f880323979b2d45fc928413a384750
+  firebase_auth: 4cf9d126dc9629a77dbcbd23723e903d8277ff5a
+  firebase_core: 100945864b4aedce3cfef0c62ab864858bf013cf
+  firebase_storage: 7add9d0db23f17b7fd798416e6bdb34bbe17658e
   FirebaseAppCheckInterop: 58db3e9494751399cf3e7b7e3e705cff71099153
   FirebaseAuth: bbe4c68f958504ba9e54aee181adbdf5b664fbc6
   FirebaseAuthInterop: fa6a29d88cf7d5649cf6f4284918a8b7627e98a9

@@ -33,16 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
       FirebaseAuth user = FirebaseAuth.instance;
 
+      List<bool> preferences = List.generate(9, (index) => false);
+
       FirebaseFirestore.instance
             .collection('users')
             .doc(user.currentUser?.uid)
             .set({
           'uid': user.currentUser?.uid,
           'email': user.currentUser!.email,
+          'preferences': preferences,
         }, SetOptions(merge: true));
 
     } on FirebaseAuthException catch (exception) {
-      wrongInputMessage("Wrong email or password");
+      wrongInputMessage(exception.toString());
     }
   }
 
