@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "310291668478",
+    "project_id": "cs4261assignment1",
+    "storage_bucket": "cs4261assignment1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310291668478:android:9e6d60a7af485c3f4034af",
+        "android_client_info": {
+          "package_name": "com.example.practice_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4ArFA7gGOhTgtfM7PBA7TUmx7e8qw938"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
