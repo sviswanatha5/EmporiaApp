@@ -11,6 +11,17 @@ class Product {
   final List<String> images;
   final String vendor;
   bool isLiked;
+  List<bool> productGenre = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
 
   Product({
     required this.id,
@@ -20,21 +31,28 @@ class Product {
     required this.images,
     required this.vendor,
     required this.isLiked,
+    required this.productGenre
   });
 }
 
-class ProductPage extends StatelessWidget {
+final CollectionReference products =
+      FirebaseFirestore.instance.collection('products');
+
+
+class ProductPage extends StatefulWidget {
   ProductPage({Key? key}) : super(key: key) {
     stream = products.snapshots();
   }
 
   late Stream<QuerySnapshot> stream;
 
-  final CollectionReference products =
-      FirebaseFirestore.instance.collection('products');
+  @override
+  State<ProductPage> createState() => _ProductPageState();
+}
 
+class _ProductPageState extends State<ProductPage> {
+  
   //retrieve all products from Firestore
-
   Future<List<Product>> getProducts() async {
     QuerySnapshot querySnapshot = await products.get();
 
@@ -51,6 +69,7 @@ class ProductPage extends StatelessWidget {
         images: data['images'],
         isLiked: data['isLiked'],
         vendor: data['vendor'],
+        productGenre: List<bool>.from(data['productGenre']),
       ));
     }
 
@@ -63,60 +82,14 @@ class ProductPage extends StatelessWidget {
   }
 
   List<Product> loadedProductList = [];
+    final TextEditingController _searchController = TextEditingController();
 
-  /* 
-
-  final List<Product> products = [
-    Product(
-        id: "p1",
-        name: 'Temu bag',
-        description: 'Great temu bag from temu',
-        price: 29.99,
-        images: ['lib/images/bag.png'],
-        vendor: 'Temu',
-        isLiked: false),
-    Product(
-        id: "p2",
-        name: 'New Bike',
-        description: 'Bike for sale, ',
-        price: 120,
-        images: ['lib/images/bike.png'],
-        vendor: 'Adrian',
-        isLiked: false),
-    Product(
-        id: "p3",
-        name: 'Used Camera',
-        description:
-            'Selling cannon model x, no battery, willing to give SD card',
-        price: 95,
-        images: ['lib/images/camera.png'],
-        vendor: 'Joe',
-        isLiked: false),
-    Product(
-        id: "p4",
-        name: 'Thrifted Shirt',
-        description: 'Dope design, size M, willing to negotiate price',
-        price: 25,
-        images: ['lib/images/shirt.png'],
-        vendor: 'Jill',
-        isLiked: false),
-    Product(
-      id: "p5",
-        name: 'Used e Scooter',
-        description: 'Used e scooter, still in good conditon, up to 15mph',
-        price: 70,
-        images: ['lib/images/scooter.png'],
-        vendor: 'test@gmail.com',
-        isLiked: false),
-  ];
-
-  */
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: StreamBuilder<QuerySnapshot>(
-            stream: stream,
+            stream: widget.stream,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasError) {
                 return const Center(child: Text('Some error occured'));
@@ -131,86 +104,63 @@ class ProductPage extends StatelessWidget {
                     id: data['id'],
                     name: data['name'],
                     description: data['description'],
-                    price: data['price'].toDouble(), // Assuming 'price' is stored as a double
+                    price: data['price']
+                        .toDouble(), // Assuming 'price' is stored as a double
                     images: List<String>.from(data['images']),
                     isLiked: data['isLiked'],
                     vendor: data['vendor'],
+                    productGenre: List<bool>.from(data['productGenre'])
                   );
                 }).toList();
-                return ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      SquareTileProduct(
-                        product: items[index],
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ProductDetailScreen(items[index]),
-                            ),
-                          );
-                        },
+
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          labelText: 'Search',
+                          suffixIcon: Icon(Icons.search),
+                        ),
                       ),
-                    ]);
-                  },
+                    ),
+                    Expanded(
+                      child:  ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SquareTileProduct(
+                                  product: items[index],
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProductDetailScreen(items[index]),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ]);
+                        },
+                     ),
+                    ),
+                  ],
                 );
               }
+              else{
+                return const Center(child: CircularProgressIndicator());
+                
+              }
 
-              return const Center(child: CircularProgressIndicator());
+              
             }));
   }
-
 }
 
-  /*
-  
-
-  @override
-  Widget build(BuildContext context) {
-    loadProducts();
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: loadedProductList.length,
-        itemBuilder: (context, index) {
-          return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SquareTileProduct(
-              product: loadedProductList[index],
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ProductDetailScreen(loadedProductList[index]),
-                  ),
-                );
-              },
-            ),
-          ]);
-
-          /*
-
-          
-        
-          return ListTile(
-            title: Text(products[index].name),
-            subtitle: Text('\$${products[index].price.toString()}'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProductDetailScreen(products[index]),
-                ),
-              );
-            },
-          );
-          */
-        },
-      ),
-    );
-  }
-  */
 
 
 class ProductDetailScreen extends StatelessWidget {
@@ -225,7 +175,6 @@ class ProductDetailScreen extends StatelessWidget {
         title: Text(product.name),
       ),
       body: SingleChildScrollView(
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -253,10 +202,8 @@ class ProductDetailScreen extends StatelessWidget {
 
             MyButton(onTap: () => {}, text: "Connect"),
           ],
+        ),
       ),
-
-      ),
-      
     );
   }
 }

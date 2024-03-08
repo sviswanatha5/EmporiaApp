@@ -54,6 +54,7 @@ class _AddProductState extends State<AddProduct> {
       'images': product.images,
       'vendor': product.vendor,
       'isLiked': product.isLiked,
+      'productGenre' : product.productGenre
     });
   }
 
@@ -61,6 +62,30 @@ class _AddProductState extends State<AddProduct> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController vendorController = TextEditingController();
+
+  final List<String> genres = [
+    "Vintage",
+    "Tops",
+    "Bottoms",
+    "Tech",
+    "Jewlery",
+    "Accessories",
+    "Books",
+    "Shoes",
+    "Decor"
+  ];
+
+  List<bool> selectedGenres = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
 
   //stdout.write()
 
@@ -134,7 +159,44 @@ class _AddProductState extends State<AddProduct> {
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(labelText: 'Price'),
               ),
+              SizedBox(height: 32),
+              Text("Product Type"),
               SizedBox(height: 16),
+              GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
+                shrinkWrap: true,
+                itemCount: 9,
+                itemBuilder: (BuildContext context, int index) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      // Handle button press
+                      setState(() {
+                        selectedGenres[index] = !selectedGenres[index];
+                      });
+                      //print('Button $index pressed');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedGenres[index]
+                          ? Colors.purple[
+                              100] // Change to your desired color when clicked
+                          : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            10.0), // Adjust the border radius
+                      ),
+                      side: const BorderSide(
+                          color:  Color.fromARGB(255, 74, 20, 140)),
+                      padding: const EdgeInsets.all(
+                          8.0), // Adjust the padding around the text
+                    ),
+                    child: Text(genres[index]),
+                  );
+                },
+              ),
               SizedBox(height: 32),
               ElevatedButton(
                 onPressed: addProductButtonDisabled
@@ -149,11 +211,10 @@ class _AddProductState extends State<AddProduct> {
                         setState(() {
                           addProductButtonDisabled = false;
                         });
-
-
                       },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: addProductButtonDisabled ? Colors.grey : null,
+                  backgroundColor:
+                      addProductButtonDisabled ? Colors.grey : null,
                 ),
                 child: Text('Add Product'),
               ),
@@ -165,9 +226,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void buttonLogic() async {
-
     await Future.delayed(const Duration(seconds: 2));
-
 
     Reference reference = FirebaseStorage.instance.ref();
     Reference refImages = reference.child('images');
@@ -189,13 +248,26 @@ class _AddProductState extends State<AddProduct> {
         vendor: FirebaseAuth.instance.currentUser!.email.toString(),
         isLiked: false,
         images: [imageUrl],
-        id: "product ${counter++}");
+        id: "product${counter++}",
+        productGenre: selectedGenres);
 
     addProduct(newProduct);
 
     nameController.clear();
     descriptionController.clear();
     priceController.clear();
+
+    selectedGenres = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
 
     setState(() {
       image = null;
@@ -204,7 +276,7 @@ class _AddProductState extends State<AddProduct> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Product Added!'),
-        duration: Duration(seconds: 2),
+        duration: Duration(milliseconds: 900),
       ),
     );
   }

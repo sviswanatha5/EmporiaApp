@@ -38,9 +38,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     try {
       if (passwordController.text == confirmPasswordController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text);
+            email: emailController.text.trim(), password: passwordController.text.trim());
 
         FirebaseAuth user = FirebaseAuth.instance;
+
+        List<bool> preferences = List.generate(9, (index) => false);
 
         FirebaseFirestore.instance
             .collection('users')
@@ -48,11 +50,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .set({
           'uid': user.currentUser?.uid,
           'email': user.currentUser!.email,
+          'preferences': preferences,
         });
       } else {
         //show error message that passwords aren't the same
         wrongInputMessage("Passwords don't match");
-      }
+      } 
     } on FirebaseAuthException catch (exception) {
       //Navigator.pop(context);
       if (exception.code == 'auth/user-not-found') {

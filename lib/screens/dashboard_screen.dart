@@ -4,6 +4,7 @@ import "package:practice_project/dashboard_widgets/add_product.dart";
 import "package:practice_project/dashboard_widgets/favorites.dart";
 import "package:practice_project/dashboard_widgets/profile.dart";
 import "package:practice_project/dashboard_widgets/searchbar.dart";
+import "package:practice_project/screens/for_you_page.dart";
 import "package:practice_project/screens/product_page.dart";
 /*
 class FirstScreen extends StatelessWidget {
@@ -81,7 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 
   List<Widget> get widgetOptions =>
-      [ProductPage(), const SearchBarWidget(), FavoriteProducts(), AddProduct(),  ProfileWidget()];
+      [ForYouPage(),  ProductPage(), FavoriteProducts(), AddProduct(),  ProfileWidget()];
 
   @override
   Widget build(BuildContext context) {
@@ -97,11 +98,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: 'For you',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            label: 'Search',
+            label: 'Explore',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
