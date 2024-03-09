@@ -68,9 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [
-              Colors.deepPurple.shade700,
-              Colors.deepPurple.shade500,
-              Colors.deepPurple.shade300,
+              Color(0xFF9A69AB), // Dark Purple
+              Color(0xFFC4A5E8), // Lighter Shade of Purple
+              Color(0xFFFF6F61), // Contrasting Color
             ],
           ),
         ),
