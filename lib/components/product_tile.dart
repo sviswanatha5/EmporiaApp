@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_project/components/like_product.dart';
 import 'package:practice_project/screens/product_page.dart';
@@ -38,10 +39,11 @@ class _SquareTileProductState extends State<SquareTileProduct> {
             fit: StackFit.expand,
             children: [
               // Image
-              Image.network(
-                widget.product.images.first ,
-                fit: BoxFit.cover
+              CachedNetworkImage(
+                imageUrl: widget.product.images.first,
+                fit: BoxFit.cover,
               ),
+
               // Text overlay
 
               Positioned(
