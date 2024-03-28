@@ -35,19 +35,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     catch (e){
 
     }
-
-
-  
-
   }
-
-
-
-
-  
-
-   
-
   void dispose() {
     timer?.cancel();
     super.dispose();
@@ -74,7 +62,25 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   Widget build(BuildContext context) => isEmailVerified
   ? DashboardScreen()
   : Scaffold(
-    appBar: AppBar(title:Text('Verify Email')),);
-    
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Color(0xFF9A69AB), // Dark Purple
+              Color(0xFFC4A5E8), // Lighter Shade of Purple
+              Color(0xFFFF6F61), // Contrasting Color
+            ],
+          ),
+        ),
+        child: Center(
+          child: Text(
+            'Please verify your email to access the dashboard.',
+            style: TextStyle(fontSize: 18.0),
+          ),
+        ),
+      ),
+    );
   
 }

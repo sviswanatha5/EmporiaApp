@@ -1,5 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
+import "package:practice_project/components/background.dart";
 import 'package:practice_project/components/product_tile.dart';
 import "package:practice_project/components/product_button.dart";
 
@@ -88,7 +89,9 @@ class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder<QuerySnapshot>(
+        body: Container(
+        decoration: gradientDecoration(),
+        child: StreamBuilder<QuerySnapshot>(
             stream: widget.stream,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasError) {
@@ -157,7 +160,7 @@ class _ProductPageState extends State<ProductPage> {
               }
 
               
-            }));
+            })));
   }
 }
 
@@ -174,7 +177,9 @@ class ProductDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(product.name),
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        decoration: gradientDecoration(),
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -204,6 +209,6 @@ class ProductDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
