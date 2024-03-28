@@ -6,6 +6,7 @@ import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
 import "package:practice_project/screens/product_page.dart";
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:practice_project/components/background.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -95,7 +96,10 @@ class _AddProductState extends State<AddProduct> {
       appBar: AppBar(
         title: Text('Sell an Item'),
       ),
-      body: SingleChildScrollView(
+
+      body: Container(
+        decoration: gradientDecoration(),
+        child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
@@ -117,33 +121,6 @@ class _AddProductState extends State<AddProduct> {
               IconButton(
                   onPressed: () => pickImages(),
                   icon: const Icon(Icons.camera_alt)),
-
-              /*
-              GestureDetector(
-
-                onTap: () => _pickImages(),
-                child: Container(
-                  padding: const EdgeInsets.all(100),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.grey[200],
-                  ),
-                  child: image != null
-                      ? Image.file(image!, height: 200, width: 200)
-                      : const Icon(
-                          Icons.camera_alt,
-                          size: 40.0,
-                        ),
-                ),
-              ),
-
-               
-            IconButton(
-              onPressed: () => _pickImages(), 
-              icon: Icon(Icons.)),
-
-              */
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(labelText: 'Item Name'),
@@ -222,7 +199,7 @@ class _AddProductState extends State<AddProduct> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   void buttonLogic() async {
