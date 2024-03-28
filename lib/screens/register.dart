@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:practice_project/components/my_button.dart';
@@ -16,11 +19,18 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final firstNameController = TextEditingController();
+
+  final lastNameController = TextEditingController();
+
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
 
   final confirmPasswordController = TextEditingController();
+
+  bool isEmailVerified = false;
+  Timer? timer;
 
   //sign user
   void signUserUp() async {
@@ -36,26 +46,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Navigator.pop(context);
 
     try {
-      if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text.trim(), password: passwordController.text.trim());
+      RegExp gatechEmailRegex = RegExp(r'@gatech\.edu$');
+      bool endsWithGatechEmail =
+          gatechEmailRegex.hasMatch(emailController.text.trim());
 
-        FirebaseAuth user = FirebaseAuth.instance;
-
-        List<bool> preferences = List.generate(9, (index) => false);
-
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.currentUser?.uid)
-            .set({
-          'uid': user.currentUser?.uid,
-          'email': user.currentUser!.email,
-          'preferences': preferences,
-        });
+      if (!endsWithGatechEmail) {
+        wrongInputMessage("Please use a @gatech.edu email");
       } else {
-        //show error message that passwords aren't the same
-        wrongInputMessage("Passwords don't match");
-      } 
+        if (passwordController.text == confirmPasswordController.text) {
+          UserCredential userCredential = await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+                  email: emailController.text.trim(),
+                  password: passwordController.text.trim());
+
+
+          
+
+        
+
+          
+
+          
+            FirebaseAuth user = FirebaseAuth.instance;
+
+            List<bool> preferences = List.generate(9, (index) => false);
+
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.currentUser?.uid)
+                .set({
+              'uid': user.currentUser?.uid,
+              'email': user.currentUser!.email,
+              'preferences': preferences,
+            });
+          
+          
+        } else {
+          //show error message that passwords aren't the same
+          wrongInputMessage("Passwords don't match");
+        }
+      }
     } on FirebaseAuthException catch (exception) {
       wrongInputMessage(exception.toString());
     }
@@ -73,6 +103,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  Future sendVerificationEmail() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      await user.sendEmailVerification();
+    } catch (e) {}
+  }
+
+  Future checkEmailVerified() async {
+    await FirebaseAuth.instance.currentUser!.reload();
+    setState(() {
+      isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    });
+
+    if (isEmailVerified) {
+      timer?.cancel();
+    }
+  }
+/*
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -87,7 +141,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ],
           ),
         ),
-        child: SafeArea(
+        child: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -117,6 +171,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
 
               SizedBox(height: 30),
+
+              // Firstname Input Field
+              _buildInputField(
+                icon: Icons.attribution,
+                hintText: 'First Name',
+                controller: firstNameController,
+                obscureText: false,
+              ),
+
+              const SizedBox(height: 10),
+
+              // Lastname Input Field
+              _buildInputField(
+                icon: Icons.attribution,
+                hintText: 'Last Name',
+                controller: lastNameController,
+                obscureText: false,
+              ),
+
+              const SizedBox(height: 10),
 
               // Email Input Field
               _buildInputField(
@@ -166,43 +240,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 30),
 
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        color: Colors.white,
-                        thickness: 0.5,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        'OR CONTINUE WITH',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        color: Colors.white,
-                        thickness: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              // For google sign in
-
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                SquareTile(
-                    imagePath: 'lib/images/google.png',
-                    onTap: () => AuthService().signInGoogle()),
-              ]),
-
               // Google Sign-in Button
 
               const SizedBox(height: 15),
@@ -225,6 +262,126 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ],
           ),
         )),
+      ),
+    );
+  }
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Color(0xFF9A69AB), // Dark Purple
+              Color(0xFFC4A5E8), // Lighter Shade of Purple
+              Color(0xFFFF6F61), // Contrasting Color
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(top: 30), // Adjust this padding as needed
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('lib/images/new_logo.jpg', width: 200, height: 200),
+                Text(
+                  'Welcome!',
+                  style: TextStyle(
+                    fontSize: 32,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Let\'s create an account',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white70,
+                  ),
+                ),
+                SizedBox(height: 30),
+                _buildInputField(
+                  icon: Icons.attribution,
+                  hintText: 'First Name',
+                  controller: firstNameController,
+                  obscureText: false,
+                ),
+                const SizedBox(height: 10),
+                _buildInputField(
+                  icon: Icons.attribution,
+                  hintText: 'Last Name',
+                  controller: lastNameController,
+                  obscureText: false,
+                ),
+                const SizedBox(height: 10),
+                _buildInputField(
+                  icon: Icons.email,
+                  hintText: 'Email',
+                  controller: emailController,
+                  obscureText: false,
+                ),
+                const SizedBox(height: 10),
+                _buildInputField(
+                  icon: Icons.lock,
+                  hintText: 'Password',
+                  controller: passwordController,
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
+                _buildInputField(
+                  icon: Icons.confirmation_num,
+                  hintText: 'Confirm Password',
+                  controller: confirmPasswordController,
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed:
+                      signUserUp, // Change this onPressed function as needed
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                    shape: StadiumBorder(),
+                    elevation: 5,
+                  ),
+                  child: Text(
+                    'Sign In',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Already have an account? ',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      onTap:
+                          widget.onTap, // Change this onTap function as needed
+                      child: const Text(
+                        'Login Now',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 //FlutterLogo(size: 100), // Temporary placeholder for logo
                 // Make sure your logo is in the assets and properly linked in pubspec.yaml
-                Image.asset('lib/images/logo.jpg', width: 150, height: 150),
+                Image.asset('lib/images/new_logo.jpg', width: 200, height: 200), 
 
                 SizedBox(height: 24),
 
@@ -139,21 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text('Sign In', style: TextStyle(color: Colors.white), ),
                 ),
 
-                Spacer(),
-
-                                // Google Sign-in Button
-                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                 SquareTile(
-                   imagePath: 'lib/images/google.png', 
-                   onTap: () => AuthService().signInGoogle(),
-                   ),
-                 ]),
-
-                
-
-
-                Spacer(),
-
+               SizedBox(height: 30),
                 // Registration prompt
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
