@@ -23,21 +23,19 @@ class Product {
     false
   ];
 
-  Product({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.images,
-    required this.vendor,
-    required this.isLiked,
-    required this.productGenre
-  });
+  Product(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.price,
+      required this.images,
+      required this.vendor,
+      required this.isLiked,
+      required this.productGenre});
 }
 
 final CollectionReference products =
-      FirebaseFirestore.instance.collection('products');
-
+    FirebaseFirestore.instance.collection('products');
 
 class ProductPage extends StatefulWidget {
   ProductPage({Key? key}) : super(key: key) {
@@ -51,7 +49,6 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  
   //retrieve all products from Firestore
   Future<List<Product>> getProducts() async {
     QuerySnapshot querySnapshot = await products.get();
@@ -76,14 +73,16 @@ class _ProductPageState extends State<ProductPage> {
     return productList;
   }
 
+  List<Product> loadedProductList = [];
+  List<Product> filteredProductList = [];
+
   Future<void> loadProducts() async {
     List<Product> loadedProducts = await getProducts();
     loadedProductList = loadedProducts;
+    filteredProductList = loadedProducts;
   }
 
-  List<Product> loadedProductList = [];
-    final TextEditingController _searchController = TextEditingController();
-
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -101,17 +100,36 @@ class _ProductPageState extends State<ProductPage> {
 
                 List<Product> items = documents.map((data) {
                   return Product(
-                    id: data['id'],
-                    name: data['name'],
-                    description: data['description'],
-                    price: data['price']
-                        .toDouble(), // Assuming 'price' is stored as a double
-                    images: List<String>.from(data['images']),
-                    isLiked: data['isLiked'],
-                    vendor: data['vendor'],
-                    productGenre: List<bool>.from(data['productGenre'])
-                  );
+                      id: data['id'],
+                      name: data['name'],
+                      description: data['description'],
+                      price: data['price']
+                          .toDouble(), // Assuming 'price' is stored as a double
+                      images: List<String>.from(data['images']),
+                      isLiked: data['isLiked'],
+                      vendor: data['vendor'],
+                      productGenre: List<bool>.from(data['productGenre']));
                 }).toList();
+
+                void filterProducts(String query) {
+                  setState(() {
+                    if (query.isNotEmpty) {
+                      // Otherwise, filter products based on the search query
+                      filteredProductList = items.where((product) {
+                        // Check if the product name contains the search query
+                        return product.name
+                            .toLowerCase()
+                            .contains(query.toLowerCase());
+                      }).toList();
+
+                      print(query);
+                    } else {
+                      filteredProductList = items;
+                    }
+                  });
+                }
+
+                List<Product> filteredItems = filteredProductList;
 
                 return Column(
                   children: [
@@ -119,6 +137,9 @@ class _ProductPageState extends State<ProductPage> {
                       padding: const EdgeInsets.all(16.0),
                       child: TextField(
                         controller: _searchController,
+                        onSubmitted: (String value) {
+                          filterProducts(value);
+                        },
                         decoration: const InputDecoration(
                           labelText: 'Search',
                           suffixIcon: Icon(Icons.search),
@@ -126,42 +147,37 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                     ),
                     Expanded(
-                      child:  ListView.builder(
-                        itemCount: items.length,
+                      child: ListView.builder(
+                        itemCount: filteredItems.length,
                         itemBuilder: (context, index) {
                           return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SquareTileProduct(
-                                  product: items[index],
+                                  product: filteredItems[index],
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            ProductDetailScreen(items[index]),
+                                            ProductDetailScreen(
+                                                filteredItems[index]),
                                       ),
                                     );
                                   },
                                 ),
                               ]);
                         },
-                     ),
+                      ),
                     ),
                   ],
                 );
-              }
-              else{
+              } else {
                 return const Center(child: CircularProgressIndicator());
-                
               }
-
-              
             }));
   }
 }
-
-
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
