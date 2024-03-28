@@ -6,9 +6,49 @@ import "package:url_launcher/url_launcher.dart";
 class ProfileWidget extends StatelessWidget {
   final String _email = FirebaseAuth.instance.currentUser!.email.toString();
 
+  Future<String> getUserFullName(String uid) async {
+    // Reference to the users collection in Firestore
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    try {
+      // Fetch the user document using the UID
+      final DocumentSnapshot userSnapshot =
+          await usersCollection.doc(uid).get();
+
+      // Check if the user document exists and if it has data
+      if (userSnapshot.exists && userSnapshot.data() != null) {
+        // Explicitly cast the data to a Map<String, dynamic>
+        final Map<String, dynamic> userData =
+            userSnapshot.data() as Map<String, dynamic>;
+
+        // Access the first and last name attributes
+        final String? firstName =
+            userData['firstname'] as String?; // Nullable string
+        final String? lastName =
+            userData['lastname'] as String?; // Nullable string
+
+        // Check if both first name and last name are not null
+        if (firstName != null && lastName != null) {
+          // Construct and return the full name
+          return '$firstName $lastName';
+        }
+      }
+
+      // Handle the case where the user document does not exist or where first name or last name is null
+      return 'User not found';
+    } catch (e) {
+      // Handle any errors that may occur during fetching
+      print('Error fetching user: $e');
+      return 'Error fetching user';
+    }
+  }
+
   void signUserOut() {
     FirebaseAuth.instance.signOut();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +66,21 @@ class ProfileWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text('Email: $_email'),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: FutureBuilder<String>(
+            future: getUserFullName(FirebaseAuth.instance.currentUser!.uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(); // Show a loading indicator while fetching the full name
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Text('Name: ${snapshot.data}');
+              }
+            },
+          ), 
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -70,7 +125,7 @@ class ProfileWidget extends StatelessWidget {
 }
 
 launchFeedbackForm() async {
-  Uri formsWebsite = Uri.parse( 'https://forms.gle/KAXmLJtCWutYXsXr5');
+  Uri formsWebsite = Uri.parse('https://forms.gle/KAXmLJtCWutYXsXr5');
   if (await canLaunchUrl(formsWebsite)) {
     await launchUrl(formsWebsite);
   } else {

@@ -69,6 +69,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           
             FirebaseAuth user = FirebaseAuth.instance;
 
+            
+
+            
+
             List<bool> preferences = List.generate(9, (index) => false);
 
             FirebaseFirestore.instance
@@ -78,6 +82,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               'uid': user.currentUser?.uid,
               'email': user.currentUser!.email,
               'preferences': preferences,
+              'firstname' : firstNameController.text.trim(),
+              'lastname' : lastNameController.text.trim()
             });
           
           
