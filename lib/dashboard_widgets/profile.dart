@@ -49,8 +49,6 @@ class ProfileWidget extends StatelessWidget {
     FirebaseAuth.instance.signOut();
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -61,12 +59,13 @@ class ProfileWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
             'Profile',
-            style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text('Email: $_email'),
+          child: Text('Email: $_email', style: TextStyle(color: Colors.white)),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -74,14 +73,16 @@ class ProfileWidget extends StatelessWidget {
             future: getUserFullName(FirebaseAuth.instance.currentUser!.uid),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Show a loading indicator while fetching the full name
+                return CircularProgressIndicator();
               } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Text('Error: ${snapshot.error}',
+                    style: TextStyle(color: Colors.white));
               } else {
-                return Text('Name: ${snapshot.data}');
+                return Text('Name: ${snapshot.data}',
+                    style: TextStyle(color: Colors.white));
               }
             },
-          ), 
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -89,7 +90,12 @@ class ProfileWidget extends StatelessWidget {
             onPressed: () {
               // TODO
             },
-            child: const Text('Edit Profile'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+            ),
+            child: const Text('Edit Profile',
+                style: TextStyle(color: Colors.white)),
           ),
         ),
         Padding(
@@ -99,7 +105,12 @@ class ProfileWidget extends StatelessWidget {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ButtonGridScreen()));
             },
-            child: const Text('Edit Preferences'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+            ),
+            child: const Text('Edit Preferences',
+                style: TextStyle(color: Colors.white)),
           ),
         ),
         Padding(
@@ -108,7 +119,12 @@ class ProfileWidget extends StatelessWidget {
             onPressed: () {
               launchFeedbackForm();
             },
-            child: const Text('FeedBack!'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+            ),
+            child:
+                const Text('FeedBack!', style: TextStyle(color: Colors.white)),
           ),
         ),
         Padding(
@@ -117,13 +133,18 @@ class ProfileWidget extends StatelessWidget {
             onPressed: () {
               signUserOut();
             },
-            child: const Text('Logout'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+            ),
+            child: const Text('Logout', style: TextStyle(color: Colors.white)),
           ),
         ),
       ],
     );
   }
 }
+
 
 launchFeedbackForm() async {
   Uri formsWebsite = Uri.parse('https://forms.gle/KAXmLJtCWutYXsXr5');
@@ -170,77 +191,77 @@ class _ButtonGridScreenState extends State<ButtonGridScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pick Your Preferences'),
-      ),
-      body: Container(
-        decoration: gradientDecoration(),
-        child:Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 3x3 Grid of "Shirts" Buttons
-              GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10.0,
-                ),
-                shrinkWrap: true,
-                itemCount: 9,
-                itemBuilder: (BuildContext context, int index) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      // Handle button press
-                      setState(() {
-                        userPreferences[index] = !userPreferences[index];
-                      });
-                      //print('Button $index pressed');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: userPreferences[index]
-                          ? Colors.purple[
-                              100] // Change to your desired color when clicked
-                          : null,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            10.0), // Adjust the border radius
-                      ),
-                      side: BorderSide(
-                          color: const Color.fromARGB(255, 74, 20, 140)),
-                      padding: EdgeInsets.all(
-                          8.0), // Adjust the padding around the text
-                    ),
-                    child: Text(preferences[index]),
-                  );
-                },
-              ),
-              SizedBox(height: 16.0), // Spacer
-
-              // Submit Button
-              ElevatedButton(
-                onPressed: () {
-                  try {
-                    FirebaseAuth user = FirebaseAuth.instance;
-
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(user.currentUser?.uid)
-                      .set({
-                    'uid': user.currentUser?.uid,
-                    'email': user.currentUser!.email,
-                    'preferences': userPreferences,
-                  }, SetOptions(merge: true));
-
-                  Navigator.pop(context);
-                } on FirebaseAuthException catch (exception) {}
-              },
-              child: Text('Update'),
-            ),
-          ],
+        appBar: AppBar(
+          title: Text('Pick Your Preferences'),
         ),
-      ),
-    ));
+        body: Container(
+          decoration: gradientDecoration(),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 3x3 Grid of "Shirts" Buttons
+                GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10.0,
+                    mainAxisSpacing: 10.0,
+                  ),
+                  shrinkWrap: true,
+                  itemCount: 9,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        // Handle button press
+                        setState(() {
+                          userPreferences[index] = !userPreferences[index];
+                        });
+                        //print('Button $index pressed');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: userPreferences[index]
+                            ? Colors.purple[
+                                100] // Change to your desired color when clicked
+                            : null,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10.0), // Adjust the border radius
+                        ),
+                        side: BorderSide(
+                            color: const Color.fromARGB(255, 74, 20, 140)),
+                        padding: EdgeInsets.all(
+                            8.0), // Adjust the padding around the text
+                      ),
+                      child: Text(preferences[index]),
+                    );
+                  },
+                ),
+                SizedBox(height: 16.0), // Spacer
+
+                // Submit Button
+                ElevatedButton(
+                  onPressed: () {
+                    try {
+                      FirebaseAuth user = FirebaseAuth.instance;
+
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(user.currentUser?.uid)
+                          .set({
+                        'uid': user.currentUser?.uid,
+                        'email': user.currentUser!.email,
+                        'preferences': userPreferences,
+                      }, SetOptions(merge: true));
+
+                      Navigator.pop(context);
+                    } on FirebaseAuthException catch (exception) {}
+                  },
+                  child: Text('Update'),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 
   Future<List<bool>> getUserPreferences() async {

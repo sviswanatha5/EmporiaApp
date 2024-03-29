@@ -174,8 +174,8 @@ class _ProductPageState extends State<ProductPage> {
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2, // Number of columns
                                   crossAxisSpacing:
-                                      40, // Spacing between columns
-                                  mainAxisSpacing: 10, // Spacing between rows
+                                      15, // Spacing between columns
+                                  mainAxisSpacing: 15, // Spacing between rows
                                   // Aspect ratio of each item (width / height)
                                 ),
                                 itemCount: filteredItems.length,
@@ -222,11 +222,23 @@ class ProductDetailScreen extends StatelessWidget {
           decoration: gradientDecoration(),
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CachedNetworkImage(
-                  imageUrl: product.images.first,
-                  fit: BoxFit.cover,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18), // Adjust the border radius accordingly
+                    child: CachedNetworkImage(
+                      imageUrl: product.images.first,
+                      fit: BoxFit.cover,
+                      height: 200,
+                      width: 200,
+                    ),
+                  ),
                 ),
                 // Display more pictures here using product.images
                 // Use Image.network or Image.asset depending on where your images are located
@@ -258,6 +270,10 @@ class ProductDetailScreen extends StatelessWidget {
                 const SizedBox(height: 50),
 
                 MyButton(onTap: () => {}, text: "Connect"),
+
+                
+
+                const SizedBox(height: 300),
               ],
             ),
           ),
@@ -273,8 +289,8 @@ String getDateDifference(Product product) {
   Duration difference = now.difference(productPosted);
 
   int daysDifference = difference.inDays;
-  int hoursDifference = difference.inHours;
-  int minutesDifference = difference.inMinutes;
+  int hoursDifference = difference.inHours - 24 * daysDifference;
+  int minutesDifference = difference.inMinutes - 60 * hoursDifference;
 
   String days = (daysDifference == 1) ? "day" : "days";
   String hours = (hoursDifference == 1) ? "hour" : "hours";

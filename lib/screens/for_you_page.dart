@@ -107,8 +107,8 @@ class _ForYouPageState extends State<ForYouPage> {
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2, // Number of columns
-                    crossAxisSpacing: 40, // Spacing between columns
-                    mainAxisSpacing: 10, // Spacing between rows
+                    crossAxisSpacing: 15, // Spacing between columns
+                    mainAxisSpacing: 15, // Spacing between rows
                     // Aspect ratio of each item (width / height)
                   ),
                   itemCount: userItems.length,
