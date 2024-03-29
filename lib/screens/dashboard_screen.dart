@@ -30,7 +30,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Emporia'),
+        title: Image.asset('lib/images/new_logo.jpg',  width: 100, height: 100), // Logo added here
+        centerTitle: true, // To center the logo if needed
         flexibleSpace: Container(
           decoration: gradientDecoration2(),
         ),
