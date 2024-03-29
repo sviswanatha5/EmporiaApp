@@ -145,7 +145,6 @@ class ProfileWidget extends StatelessWidget {
   }
 }
 
-
 launchFeedbackForm() async {
   Uri formsWebsite = Uri.parse('https://forms.gle/KAXmLJtCWutYXsXr5');
   if (await canLaunchUrl(formsWebsite)) {
@@ -161,7 +160,7 @@ class ButtonGridScreen extends StatefulWidget {
 }
 
 class _ButtonGridScreenState extends State<ButtonGridScreen> {
-  List<bool> userPreferences = [];
+  late List<bool> userPreferences;
 
   @override
   void initState() {
@@ -191,77 +190,75 @@ class _ButtonGridScreenState extends State<ButtonGridScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Pick Your Preferences'),
-        ),
-        body: Container(
-          decoration: gradientDecoration(),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 3x3 Grid of "Shirts" Buttons
-                GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10.0,
-                    mainAxisSpacing: 10.0,
-                  ),
-                  shrinkWrap: true,
+      appBar: AppBar(
+        title: Text('Pick Your Preferences'),
+      ),
+      body: Container(
+        decoration: gradientDecoration(),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: ListView.builder(
                   itemCount: 9,
                   itemBuilder: (BuildContext context, int index) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        // Handle button press
-                        setState(() {
-                          userPreferences[index] = !userPreferences[index];
-                        });
-                        //print('Button $index pressed');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: userPreferences[index]
-                            ? Colors.purple[
-                                100] // Change to your desired color when clicked
-                            : null,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              10.0), // Adjust the border radius
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 3.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
-                        side: BorderSide(
-                            color: const Color.fromARGB(255, 74, 20, 140)),
-                        padding: EdgeInsets.all(
-                            8.0), // Adjust the padding around the text
+                        child: CheckboxListTile(
+                          value: userPreferences[index],
+                          onChanged: (newValue) {
+                            setState(() {
+                              userPreferences[index] = !userPreferences[index];
+                              
+                            });
+                          },
+                          title: Text(
+                            preferences[index],
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          activeColor:
+                              Colors.purple[100], // Adjust the selected color
+                        ),
                       ),
-                      child: Text(preferences[index]),
                     );
                   },
                 ),
-                SizedBox(height: 16.0), // Spacer
+              ),
+              SizedBox(height: 16.0), // Spacer
 
-                // Submit Button
-                ElevatedButton(
-                  onPressed: () {
-                    try {
-                      FirebaseAuth user = FirebaseAuth.instance;
+// Submit Button
+              ElevatedButton(
+                onPressed: () {
+                  try {
+                    FirebaseAuth user = FirebaseAuth.instance;
 
-                      FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(user.currentUser?.uid)
-                          .set({
-                        'uid': user.currentUser?.uid,
-                        'email': user.currentUser!.email,
-                        'preferences': userPreferences,
-                      }, SetOptions(merge: true));
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.currentUser?.uid)
+                        .set({
+                      'uid': user.currentUser?.uid,
+                      'email': user.currentUser!.email,
+                      'preferences': userPreferences,
+                    }, SetOptions(merge: true));
 
-                      Navigator.pop(context);
-                    } on FirebaseAuthException catch (exception) {}
-                  },
-                  child: Text('Update'),
-                ),
-              ],
-            ),
+                    Navigator.pop(context);
+                  } on FirebaseAuthException catch (exception) {}
+                },
+                child: Text('Update'),
+              ),
+              SizedBox(height: 30.0),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Future<List<bool>> getUserPreferences() async {

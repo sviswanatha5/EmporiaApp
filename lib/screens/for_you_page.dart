@@ -68,7 +68,18 @@ class _ForYouPageState extends State<ForYouPage> {
             }
 
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No products found'));
+              return const Center(
+                child: Text(
+                'No products found',
+                style: TextStyle(
+                fontSize: 22, // Adjust the font size as needed
+                color: Colors.white, // Set the color to white
+                ),
+                ),
+                );
+
+
+
             }
 
             List<Product> userItems = snapshot.data!;

@@ -153,15 +153,32 @@ class _ProductPageState extends State<ProductPage> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: TextField(
-                            controller: _searchController,
-                            onSubmitted: (String value) {
-                              filterProducts(value);
-                            },
-                            decoration: const InputDecoration(
-                              labelText: 'Search',
-                              suffixIcon: Icon(Icons.search),
-                            ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchController,
+                                  onSubmitted: (String value) {
+                                    filterProducts(value);
+                                  },
+                                  decoration: InputDecoration(
+                                    labelText: 'Search',
+                                    labelStyle: TextStyle(color: Colors.white),
+                                  ),
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  filterProducts(_searchController.text);
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child:
+                                      Icon(Icons.search, color: Colors.white),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Expanded(
@@ -224,6 +241,7 @@ class ProductDetailScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(height: 5),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),

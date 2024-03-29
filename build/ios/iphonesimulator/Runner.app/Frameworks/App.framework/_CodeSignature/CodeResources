@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		coekAujF9ao7vuGQ2IG3AgFAqgY=
+		O/nkOTl0oUqn4b2XycUn1Gf00m0=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		i05yFKlxYq/foi4ruHm9UK6o6/w=
+		u4Nt2BKgX0PxUHfNt9j7g79PR1s=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		dhrGa9nlbv08gaFSFy2/yp0Z+3Q=
+		NAFTJIQn3M/KQZNLbKQp5o1fPAM=
 		</data>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
@@ -34,7 +34,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		n4qv9foG9Yb1WSiY9YiJWNRQHrA=
+		rc7mTjGXSw0yVcfKBmthKP3aqow=
 		</data>
 		<key>flutter_assets/lib/images/.DS_Store</key>
 		<data>
@@ -76,6 +76,10 @@
 		<data>
 		P7bb/oR3EhwqCIH1M6LyTuBIWYU=
 		</data>
+		<key>flutter_assets/packages/flutter_image_compress_web/assets/pica.min.js</key>
+		<data>
+		Mo0xQmdAumhf5KoeUg6A8AWGnHw=
+		</data>
 		<key>flutter_assets/shaders/ink_sparkle.frag</key>
 		<data>
 		hBZgIGdEvhX+IvXd5bjkjJVu6+s=
@@ -91,14 +95,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			AN9kgQgmWLNnNcjXa8t+lCzGKBjDfIvrqOtb0FqLEvc=
+			I29QXAWPdLQlryo4EiA1R9KRyWh3Mqi4mmuOntoal+w=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			EFYyrjKEabC9Y0kmA/HK4qwBidurYatSPfQKR4WHGF8=
+			1/o9Q6Sj6Vq1X9lmTnadYiRm9RXWpweWctasKUMK3Yo=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -112,7 +116,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			fc1DRcH7DjJ3knvIZhyaEADoOcwcKS/mMpUZI7jsXCM=
+			DILmdqYBE5uapci6zwW9obFbkbLxk2JBK3BCCVvslSk=
 			</data>
 		</dict>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
@@ -133,7 +137,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			0nwf0NkCvzO65jvfDytglyAP3AcEl2EQhwqdMVcLgXI=
+			rz2uQ7eRcvDPnhq0jrXsdCFbWnrBZeNabG97oo4/q4s=
 			</data>
 		</dict>
 		<key>flutter_assets/lib/images/bag.png</key>
@@ -197,6 +201,13 @@
 			<key>hash2</key>
 			<data>
 			x6NX+tjyECiQtyzbbjyY8U2zoZ7GDbJtE+T+k/dzgI0=
+			</data>
+		</dict>
+		<key>flutter_assets/packages/flutter_image_compress_web/assets/pica.min.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Chn6pGY+MG8wbFljM1nwrFZDT4pAa4TH/oRx9FLNmgM=
 			</data>
 		</dict>
 		<key>flutter_assets/shaders/ink_sparkle.frag</key>
