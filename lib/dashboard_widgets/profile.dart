@@ -1,6 +1,7 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:practice_project/components/background.dart";
 import "package:url_launcher/url_launcher.dart";
 
 class ProfileWidget extends StatelessWidget {
@@ -172,53 +173,55 @@ class _ButtonGridScreenState extends State<ButtonGridScreen> {
       appBar: AppBar(
         title: Text('Pick Your Preferences'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 3x3 Grid of "Shirts" Buttons
-            GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-              ),
-              shrinkWrap: true,
-              itemCount: 9,
-              itemBuilder: (BuildContext context, int index) {
-                return ElevatedButton(
-                  onPressed: () {
-                    // Handle button press
-                    setState(() {
-                      userPreferences[index] = !userPreferences[index];
-                    });
-                    //print('Button $index pressed');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: userPreferences[index]
-                        ? Colors.purple[
-                            100] // Change to your desired color when clicked
-                        : null,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          10.0), // Adjust the border radius
+      body: Container(
+        decoration: gradientDecoration(),
+        child:Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 3x3 Grid of "Shirts" Buttons
+              GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
+                shrinkWrap: true,
+                itemCount: 9,
+                itemBuilder: (BuildContext context, int index) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      // Handle button press
+                      setState(() {
+                        userPreferences[index] = !userPreferences[index];
+                      });
+                      //print('Button $index pressed');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: userPreferences[index]
+                          ? Colors.purple[
+                              100] // Change to your desired color when clicked
+                          : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            10.0), // Adjust the border radius
+                      ),
+                      side: BorderSide(
+                          color: const Color.fromARGB(255, 74, 20, 140)),
+                      padding: EdgeInsets.all(
+                          8.0), // Adjust the padding around the text
                     ),
-                    side: BorderSide(
-                        color: const Color.fromARGB(255, 74, 20, 140)),
-                    padding: EdgeInsets.all(
-                        8.0), // Adjust the padding around the text
-                  ),
-                  child: Text(preferences[index]),
-                );
-              },
-            ),
-            SizedBox(height: 16.0), // Spacer
+                    child: Text(preferences[index]),
+                  );
+                },
+              ),
+              SizedBox(height: 16.0), // Spacer
 
-            // Submit Button
-            ElevatedButton(
-              onPressed: () {
-                try {
-                  FirebaseAuth user = FirebaseAuth.instance;
+              // Submit Button
+              ElevatedButton(
+                onPressed: () {
+                  try {
+                    FirebaseAuth user = FirebaseAuth.instance;
 
                   FirebaseFirestore.instance
                       .collection('users')
@@ -237,7 +240,7 @@ class _ButtonGridScreenState extends State<ButtonGridScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Future<List<bool>> getUserPreferences() async {

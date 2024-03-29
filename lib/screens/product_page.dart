@@ -13,6 +13,7 @@ class Product {
   final List<String> images;
   final String vendor;
   bool isLiked;
+  final String timeAdded;
   List<bool> productGenre = [
     false,
     false,
@@ -33,6 +34,7 @@ class Product {
       required this.images,
       required this.vendor,
       required this.isLiked,
+      required this.timeAdded,
       required this.productGenre});
 }
 
@@ -48,9 +50,6 @@ class ProductPage extends StatefulWidget {
 
   @override
   State<ProductPage> createState() => _ProductPageState();
-
-  @override
-  
 }
 
 class _ProductPageState extends State<ProductPage> {
@@ -66,11 +65,14 @@ class _ProductPageState extends State<ProductPage> {
       productList.add(Product(
         description: data['description'],
         id: data['id'],
-        price: data['price'],
+        price: data['price'].toDouble(),
         name: data['name'],
-        images: (data['images'] as List<dynamic>).map((image) => image.toString()).toList(),
+        images: (data['images'] as List<dynamic>)
+            .map((image) => image.toString())
+            .toList(),
         isLiked: data['isLiked'],
         vendor: data['vendor'],
+        timeAdded: data['timeAdded'],
         productGenre: List<bool>.from(data['productGenre']),
       ));
     }
@@ -118,9 +120,12 @@ class _ProductPageState extends State<ProductPage> {
                           description: data['description'],
                           price: data['price']
                               .toDouble(), // Assuming 'price' is stored as a double
-                          images: (data['images'] as List<dynamic>).map((image) => image.toString()).toList(),
+                          images: (data['images'] as List<dynamic>)
+                              .map((image) => image.toString())
+                              .toList(),
                           isLiked: data['isLiked'],
                           vendor: data['vendor'],
+                          timeAdded: data['timeAdded'],
                           productGenre: List<bool>.from(data['productGenre']));
                     }).toList();
 
@@ -160,27 +165,37 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                         ),
                         Expanded(
-                          child: ListView.builder(
-                            itemCount: filteredItems.length,
-                            itemBuilder: (context, index) {
-                              return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SquareTileProduct(
-                                      product: filteredItems[index],
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProductDetailScreen(
-                                                    filteredItems[index]),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ]);
-                            },
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  10), // Add padding around all borders
+                              child: GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, // Number of columns
+                                  crossAxisSpacing:
+                                      40, // Spacing between columns
+                                  mainAxisSpacing: 10, // Spacing between rows
+                                  // Aspect ratio of each item (width / height)
+                                ),
+                                itemCount: filteredItems.length,
+                                itemBuilder: (context, index) {
+                                  return SquareTileProduct(
+                                    product: filteredItems[index],
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProductDetailScreen(
+                                                  filteredItems[index]),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -210,9 +225,9 @@ class ProductDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CachedNetworkImage(
-                imageUrl: product.images.first,
-                fit: BoxFit.cover,
-              ),
+                  imageUrl: product.images.first,
+                  fit: BoxFit.cover,
+                ),
                 // Display more pictures here using product.images
                 // Use Image.network or Image.asset depending on where your images are located
                 Text(
@@ -233,7 +248,14 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
                 // Add more details as needed
 
-                const SizedBox(height: 100),
+                const SizedBox(height: 10),
+
+                Text(
+                  getDateDifference(product),
+                  style: const TextStyle(fontSize: 16),
+                ),
+
+                const SizedBox(height: 50),
 
                 MyButton(onTap: () => {}, text: "Connect"),
               ],
@@ -241,4 +263,22 @@ class ProductDetailScreen extends StatelessWidget {
           ),
         ));
   }
+}
+
+String getDateDifference(Product product) {
+  DateTime now = DateTime.now();
+
+  DateTime productPosted = DateTime.parse(product.timeAdded.substring(0, 16));
+
+  Duration difference = now.difference(productPosted);
+
+  int daysDifference = difference.inDays;
+  int hoursDifference = difference.inHours;
+  int minutesDifference = difference.inMinutes;
+
+  String days = (daysDifference == 1) ? "day" : "days";
+  String hours = (hoursDifference == 1) ? "hour" : "hours";
+  String minutes = (minutesDifference == 1) ? "minute" : "minutes";
+
+  return "Posted $daysDifference $days, $hoursDifference $hours, $minutesDifference $minutes ago";
 }

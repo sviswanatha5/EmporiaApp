@@ -18,6 +18,8 @@ class SquareTileProduct extends StatefulWidget {
 class _SquareTileProductState extends State<SquareTileProduct> {
   bool liked = false;
 
+
+/* 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -101,6 +103,92 @@ class _SquareTileProductState extends State<SquareTileProduct> {
         // ),
 
         );
+  }
+  */
+
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // White border around the image
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18), // Adjust the border radius accordingly
+                child: CachedNetworkImage(
+                  imageUrl: widget.product.images.first,
+                  fit: BoxFit.cover,
+                  height: 200,
+                  width: 200,
+                ),
+              ),
+            ),
+            // Product details
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                //padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                  color: Colors.black.withOpacity(0.45),
+                  border: Border.all(color: Colors.white, width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Price
+                        Text(
+                          '\$${naturalPrices(widget.product.price)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        // Like button
+                        LikeButton(
+                          liked: liked,
+                          onTap: () => toggleLike(),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 0),
+                    // Name
+                    Center(
+                      child: Text(
+                        widget.product.name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void toggleLike() {

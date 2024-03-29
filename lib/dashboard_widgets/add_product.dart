@@ -15,7 +15,7 @@ class AddProduct extends StatefulWidget {
 
 class _AddProductState extends State<AddProduct> {
   File? image;
-  var counter = 0;
+  static int counter = 0;
 
   String imageUrl = '';
 
@@ -55,6 +55,7 @@ class _AddProductState extends State<AddProduct> {
       'images': product.images,
       'vendor': product.vendor,
       'isLiked': product.isLiked,
+      'timeAdded': product.timeAdded,
       'productGenre' : product.productGenre
     });
   }
@@ -217,6 +218,8 @@ class _AddProductState extends State<AddProduct> {
       imageUrl = await uploadImage.getDownloadURL();
     } catch (error) {}
 
+    String dateAdded = DateTime.now().toString();
+
     //debugPrint(priceController.toString());
     Product newProduct = Product(
         name: nameController.text.trim(),
@@ -226,6 +229,7 @@ class _AddProductState extends State<AddProduct> {
         isLiked: false,
         images: [imageUrl],
         id: "product${counter++}",
+        timeAdded: dateAdded,
         productGenre: selectedGenres);
 
     addProduct(newProduct);

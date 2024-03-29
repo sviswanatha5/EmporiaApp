@@ -43,6 +43,7 @@ class _ForYouPageState extends State<ForYouPage> {
         images: List<String>.from(data['images']),
         isLiked: data['isLiked'],
         vendor: data['vendor'],
+        timeAdded: data['timeAdded'],
         productGenre: List<bool>.from(data['productGenre']),
       ));
     }
@@ -75,7 +76,7 @@ class _ForYouPageState extends State<ForYouPage> {
             for (int i = 0; i < userItems.length; i++) {
               print(userItems[i].name);
             }
-
+            /* 
             return ListView.builder(
               itemCount: userItems.length,
               itemBuilder: (context, index) {
@@ -97,6 +98,35 @@ class _ForYouPageState extends State<ForYouPage> {
                   ],
                 );
               },
+            );
+            */
+
+            return Center(
+              child: Container(
+                padding: EdgeInsets.all(10), // Add padding around all borders
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Number of columns
+                    crossAxisSpacing: 40, // Spacing between columns
+                    mainAxisSpacing: 10, // Spacing between rows
+                    // Aspect ratio of each item (width / height)
+                  ),
+                  itemCount: userItems.length,
+                  itemBuilder: (context, index) {
+                    return SquareTileProduct(
+                      product: userItems[index],
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailScreen(userItems[index]),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
             );
           },
         ),
