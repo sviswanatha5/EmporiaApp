@@ -1,5 +1,5 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:practice_project/components/my_button.dart';
@@ -7,8 +7,6 @@ import 'package:practice_project/components/my_test_field.dart';
 import 'package:practice_project/components/square_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:practice_project/services/aut_services.dart';
-
-
 
 class HomeScreen extends StatefulWidget {
   final Function()? onTap;
@@ -22,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   //sign user
   void signUserIn() async {
@@ -36,17 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
       List<bool> preferences = List.generate(9, (index) => false);
 
       FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.currentUser?.uid)
-            .set({
-          'uid': user.currentUser?.uid,
-          'email': user.currentUser!.email,
-          'preferences': preferences,
-        }, SetOptions(merge: true));
-
+          .collection('users')
+          .doc(user.currentUser?.uid)
+          .set({
+        'uid': user.currentUser?.uid,
+        'email': user.currentUser!.email,
+        'preferences': preferences,
+      }, SetOptions(merge: true));
     } on FirebaseAuthException catch (exception) {
       wrongInputMessage(exception.toString());
     }
+    await analytics.logLogin();
   }
 
   void wrongInputMessage(String message) {
@@ -59,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 //FlutterLogo(size: 100), // Temporary placeholder for logo
                 // Make sure your logo is in the assets and properly linked in pubspec.yaml
-                Image.asset('lib/images/new_logo.jpg', width: 200, height: 200), 
+                Image.asset('lib/images/new_logo.jpg', width: 200, height: 200),
 
                 SizedBox(height: 24),
 
@@ -136,10 +136,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     shape: StadiumBorder(),
                     elevation: 5,
                   ),
-                  child: Text('Sign In', style: TextStyle(color: Colors.white), ),
+                  child: Text(
+                    'Sign In',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
 
-               SizedBox(height: 30),
+                SizedBox(height: 30),
                 // Registration prompt
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -194,5 +197,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

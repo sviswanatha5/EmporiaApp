@@ -1,9 +1,11 @@
 import "package:cached_network_image/cached_network_image.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_analytics/firebase_analytics.dart";
 import "package:flutter/material.dart";
 import "package:practice_project/components/background.dart";
 import 'package:practice_project/components/product_tile.dart';
 import "package:practice_project/components/product_button.dart";
+import "package:practice_project/screens/chat_screen.dart";
 
 class Product {
   final String id;
@@ -96,6 +98,7 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   final TextEditingController _searchController = TextEditingController();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +172,9 @@ class _ProductPageState extends State<ProductPage> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {
+                                onTap: () async {
+                                  await analytics.logSearch(
+                                      searchTerm: _searchController.text);
                                   filterProducts(_searchController.text);
                                 },
                                 child: const Padding(
@@ -200,6 +205,18 @@ class _ProductPageState extends State<ProductPage> {
                                   return SquareTileProduct(
                                     product: filteredItems[index],
                                     onTap: () {
+                                      analytics.logViewItem(
+                                          currency: 'usd',
+                                          value: filteredItems[index].price,
+                                          parameters: <String, dynamic>{
+                                            'name': filteredItems[index].name,
+                                            'id': filteredItems[index].id,
+                                            'vendor':
+                                                filteredItems[index].vendor,
+                                            'productGenre': filteredItems[index]
+                                                .productGenre
+                                                .toString()
+                                          });
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -226,8 +243,9 @@ class _ProductPageState extends State<ProductPage> {
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
-  const ProductDetailScreen(this.product);
+  ProductDetailScreen(this.product, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -247,9 +265,9 @@ class ProductDetailScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white, width: 2),
                   ),
-                  
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18), // Adjust the border radius accordingly
+                    borderRadius: BorderRadius.circular(
+                        18), // Adjust the border radius accordingly
                     child: CachedNetworkImage(
                       imageUrl: product.images.first,
                       fit: BoxFit.cover,
@@ -287,9 +305,19 @@ class ProductDetailScreen extends StatelessWidget {
 
                 const SizedBox(height: 50),
 
-                MyButton(onTap: () => {}, text: "Connect"),
-
-                
+                MyButton(
+                    onTap: () => {
+                          analytics.logEvent(name: "vendor_contact"),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                userId: product.vendor,
+                              ),
+                            ),
+                          )
+                        },
+                    text: "Connect"),
 
                 const SizedBox(height: 300),
               ],

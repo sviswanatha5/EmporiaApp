@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_project/components/like_product.dart';
 import 'package:practice_project/screens/product_page.dart';
@@ -17,7 +18,6 @@ class SquareTileProduct extends StatefulWidget {
 
 class _SquareTileProductState extends State<SquareTileProduct> {
   bool liked = false;
-
 
 /* 
   @override
@@ -106,7 +106,6 @@ class _SquareTileProductState extends State<SquareTileProduct> {
   }
   */
 
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -122,7 +121,8 @@ class _SquareTileProductState extends State<SquareTileProduct> {
                 border: Border.all(color: Colors.white, width: 2),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(18), // Adjust the border radius accordingly
+                borderRadius: BorderRadius.circular(
+                    18), // Adjust the border radius accordingly
                 child: CachedNetworkImage(
                   imageUrl: widget.product.images.first,
                   fit: BoxFit.cover,
@@ -180,7 +180,6 @@ class _SquareTileProductState extends State<SquareTileProduct> {
                         ),
                       ),
                     ),
-                    
                   ],
                 ),
               ),
@@ -192,7 +191,7 @@ class _SquareTileProductState extends State<SquareTileProduct> {
   }
 
   void toggleLike() {
-    setState(() {
+    setState(() async {
       if (liked == false) {
         addFavorite(widget.product);
       } else {

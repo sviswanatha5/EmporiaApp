@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
 
   final confirmPasswordController = TextEditingController();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   bool isEmailVerified = false;
   Timer? timer;
@@ -83,6 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } on FirebaseAuthException catch (exception) {
       wrongInputMessage(exception.toString());
     }
+    await analytics.logSignUp(signUpMethod: "GaTech Email");
   }
 
   void wrongInputMessage(String message) {

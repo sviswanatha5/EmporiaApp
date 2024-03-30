@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_analytics/firebase_analytics.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:practice_project/components/product_tile.dart";
@@ -29,6 +30,7 @@ class UserDuration {
 
 class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
   late DateTime _pageOpenTime;
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -132,6 +134,16 @@ class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
                     return SquareTileProduct(
                       product: userItems[index],
                       onTap: () {
+                        analytics.logViewItem(
+                            currency: 'usd',
+                            value: userItems[index].price,
+                            parameters: <String, dynamic>{
+                              'name': userItems[index].name,
+                              'id': userItems[index].id,
+                              'vendor': userItems[index].vendor,
+                              'productGenre':
+                                  userItems[index].productGenre.toString()
+                            });
                         Navigator.push(
                           context,
                           MaterialPageRoute(
