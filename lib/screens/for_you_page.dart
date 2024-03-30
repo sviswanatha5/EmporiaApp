@@ -5,6 +5,10 @@ import "package:practice_project/components/product_tile.dart";
 import "package:practice_project/screens/product_page.dart";
 import 'package:practice_project/components/background.dart';
 
+
+
+final Map<String, String> productIDMappings = {};
+
 final CollectionReference products =
     FirebaseFirestore.instance.collection('products');
 
@@ -21,6 +25,8 @@ class ForYouPage extends StatefulWidget {
 
 class _ForYouPageState extends State<ForYouPage> {
   // retrieve all products from Firestore
+
+  
 
   Future<List<Product>> loadUserProducts() async {
     List<Product> userItems = await userPreferenceProducts(await getProducts());
@@ -46,6 +52,8 @@ class _ForYouPageState extends State<ForYouPage> {
         timeAdded: data['timeAdded'],
         productGenre: List<bool>.from(data['productGenre']),
       ));
+
+      productIDMappings[data['id']] = documentSnapshot.id;
     }
 
     return productList;
@@ -58,7 +66,8 @@ class _ForYouPageState extends State<ForYouPage> {
         decoration: gradientDecoration(), // Applying the gradient decoration
         child: FutureBuilder<List<Product>>(
           future: loadUserProducts(),
-          builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -70,16 +79,13 @@ class _ForYouPageState extends State<ForYouPage> {
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(
                 child: Text(
-                'No products found',
-                style: TextStyle(
-                fontSize: 22, // Adjust the font size as needed
-                color: Colors.white, // Set the color to white
+                  'No products found',
+                  style: TextStyle(
+                    fontSize: 22, // Adjust the font size as needed
+                    color: Colors.white, // Set the color to white
+                  ),
                 ),
-                ),
-                );
-
-
-
+              );
             }
 
             List<Product> userItems = snapshot.data!;
@@ -130,7 +136,8 @@ class _ForYouPageState extends State<ForYouPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetailScreen(userItems[index]),
+                            builder: (context) =>
+                                ProductDetailScreen(userItems[index]),
                           ),
                         );
                       },
@@ -144,7 +151,6 @@ class _ForYouPageState extends State<ForYouPage> {
       ),
     );
   }
-
 
   Future<List<bool>> getPreferences() async {
     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
@@ -180,7 +186,8 @@ class _ForYouPageState extends State<ForYouPage> {
       List<bool> productGenre = allProducts[i].productGenre;
 
       for (int j = 0; j < 9; j++) {
-        if (userPreferences[j] == true && productGenre[j] == userPreferences[j] ) {
+        if (userPreferences[j] == true &&
+            productGenre[j] == userPreferences[j]) {
           isMatch = true;
           break;
         }
