@@ -7,20 +7,51 @@ import 'package:practice_project/components/background.dart';
 
 final CollectionReference products =
     FirebaseFirestore.instance.collection('products');
+final String _email = FirebaseAuth.instance.currentUser!.email.toString();
+List<UserDuration> userDurations = [];
 
 class ForYouPage extends StatefulWidget {
-  ForYouPage({super.key}) {
-    stream = products.snapshots();
-  }
-
-  late Stream<QuerySnapshot> stream;
+  ForYouPage({Key? key}) : super(key: key);
 
   @override
   State<ForYouPage> createState() => _ForYouPageState();
 }
 
-class _ForYouPageState extends State<ForYouPage> {
-  // retrieve all products from Firestore
+class UserDuration {
+  late String user;
+  late int durationSeconds;
+
+  UserDuration(this.user, this.durationSeconds);
+  String toString() {
+    return '(User: $user, Duration: $durationSeconds seconds)';
+  }
+}
+
+class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
+  late DateTime _pageOpenTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageOpenTime = DateTime.now();
+    WidgetsBinding.instance?.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance?.removeObserver(this);
+    _trackPageDuration();
+  }
+
+  void _trackPageDuration() {
+    DateTime pageCloseTime = DateTime.now();
+    Duration duration = pageCloseTime.difference(_pageOpenTime);
+    print("$_email spent ${duration.inSeconds} seconds on ForYouPage.");
+    userDurations.add(UserDuration(_email, duration.inSeconds));
+    print(userDurations);
+    // You can send this duration to analytics or store it as needed
+  }
 
   Future<List<Product>> loadUserProducts() async {
     List<Product> userItems = await userPreferenceProducts(await getProducts());
@@ -58,7 +89,8 @@ class _ForYouPageState extends State<ForYouPage> {
         decoration: gradientDecoration(), // Applying the gradient decoration
         child: FutureBuilder<List<Product>>(
           future: loadUserProducts(),
-          builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -70,16 +102,13 @@ class _ForYouPageState extends State<ForYouPage> {
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(
                 child: Text(
-                'No products found',
-                style: TextStyle(
-                fontSize: 22, // Adjust the font size as needed
-                color: Colors.white, // Set the color to white
+                  'No products found',
+                  style: TextStyle(
+                    fontSize: 22, // Adjust the font size as needed
+                    color: Colors.white, // Set the color to white
+                  ),
                 ),
-                ),
-                );
-
-
-
+              );
             }
 
             List<Product> userItems = snapshot.data!;
@@ -87,30 +116,6 @@ class _ForYouPageState extends State<ForYouPage> {
             for (int i = 0; i < userItems.length; i++) {
               print(userItems[i].name);
             }
-            /* 
-            return ListView.builder(
-              itemCount: userItems.length,
-              itemBuilder: (context, index) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTileProduct(
-                      product: userItems[index],
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailScreen(userItems[index]),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-            */
 
             return Center(
               child: Container(
@@ -130,7 +135,8 @@ class _ForYouPageState extends State<ForYouPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetailScreen(userItems[index]),
+                            builder: (context) =>
+                                ProductDetailScreen(userItems[index]),
                           ),
                         );
                       },
@@ -144,7 +150,6 @@ class _ForYouPageState extends State<ForYouPage> {
       ),
     );
   }
-
 
   Future<List<bool>> getPreferences() async {
     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
@@ -180,7 +185,8 @@ class _ForYouPageState extends State<ForYouPage> {
       List<bool> productGenre = allProducts[i].productGenre;
 
       for (int j = 0; j < 9; j++) {
-        if (userPreferences[j] == true && productGenre[j] == userPreferences[j] ) {
+        if (userPreferences[j] == true &&
+            productGenre[j] == userPreferences[j]) {
           isMatch = true;
           break;
         }

@@ -61,34 +61,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   email: emailController.text.trim(),
                   password: passwordController.text.trim());
 
+          FirebaseAuth user = FirebaseAuth.instance;
 
-          
+          List<bool> preferences = List.generate(9, (index) => false);
 
-        
-
-          
-
-          
-            FirebaseAuth user = FirebaseAuth.instance;
-
-            
-
-            
-
-            List<bool> preferences = List.generate(9, (index) => false);
-
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.currentUser?.uid)
-                .set({
-              'uid': user.currentUser?.uid,
-              'email': user.currentUser!.email,
-              'preferences': preferences,
-              'firstname' : firstNameController.text.trim(),
-              'lastname' : lastNameController.text.trim()
-            });
-          
-          
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.currentUser?.uid)
+              .set({
+            'uid': user.currentUser?.uid,
+            'email': user.currentUser!.email,
+            'preferences': preferences,
+            'firstname': firstNameController.text.trim(),
+            'lastname': lastNameController.text.trim()
+          });
         } else {
           //show error message that passwords aren't the same
           wrongInputMessage("Passwords don't match");
@@ -208,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     elevation: 5,
                   ),
                   child: Text(
-                    'Sign In',
+                    'Register',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
