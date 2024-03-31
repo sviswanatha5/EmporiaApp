@@ -8,7 +8,7 @@ import "package:practice_project/screens/product_page.dart";
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:practice_project/components/background.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-
+import 'package:uuid/uuid.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -43,13 +43,11 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  Future<void> takePicture(ImageSource source) async{
-
+  Future<void> takePicture(ImageSource source) async {
     final pickedImage = await ImagePicker().pickImage(source: source);
     setState(() {
       image = pickedImage != null ? File(pickedImage.path) : null;
     });
-
   }
 
   final CollectionReference products =
@@ -67,7 +65,7 @@ class _AddProductState extends State<AddProduct> {
       'vendor': product.vendor,
       'isLiked': product.isLiked,
       'timeAdded': product.timeAdded,
-      'productGenre' : product.productGenre
+      'productGenre': product.productGenre
     });
   }
 
@@ -105,11 +103,9 @@ class _AddProductState extends State<AddProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-
-      body: Container(
-        decoration: gradientDecoration(),
-        child: SingleChildScrollView(
+        body: Container(
+      decoration: gradientDecoration(),
+      child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
@@ -152,13 +148,11 @@ class _AddProductState extends State<AddProduct> {
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
-                            
                           ),
                         ),
                       )
                     : null,
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -175,7 +169,6 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ],
               ),
-              
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(labelText: 'Item Name'),
@@ -221,7 +214,7 @@ class _AddProductState extends State<AddProduct> {
                             10.0), // Adjust the border radius
                       ),
                       side: const BorderSide(
-                          color:  Color.fromARGB(255, 74, 20, 140)),
+                          color: Color.fromARGB(255, 74, 20, 140)),
                       padding: const EdgeInsets.all(
                           8.0), // Adjust the padding around the text
                     ),
@@ -319,7 +312,6 @@ class _AddProductState extends State<AddProduct> {
   }
   */
 
-
   void buttonLogic() async {
     try {
       String dateAdded = DateTime.now().toString();
@@ -336,6 +328,9 @@ class _AddProductState extends State<AddProduct> {
       TaskSnapshot uploadSnapshot = await uploadTask;
       imageUrl = await uploadSnapshot.ref.getDownloadURL();
 
+      var uuid = Uuid();
+      String productId = uuid.v1().toString();
+
       // Construct the product
       Product newProduct = Product(
         name: nameController.text.trim(),
@@ -344,7 +339,7 @@ class _AddProductState extends State<AddProduct> {
         vendor: FirebaseAuth.instance.currentUser!.email.toString(),
         isLiked: false,
         images: [imageUrl],
-        id: "product${counter++}",
+        id: productId,
         timeAdded: dateAdded,
         productGenre: selectedGenres,
       );
@@ -377,20 +372,15 @@ class _AddProductState extends State<AddProduct> {
 // Function to compress image
   Future<File?> compressImage(File imageFile) async {
     try {
-    final result = await FlutterImageCompress.compressAndGetFile(
-      imageFile.path,
-      imageFile.path,
-      quality: 50, // Adjust the quality as needed
-    );
-    return result != null ? File(result.path) : null;
-  } catch (e) {
-    print('Error compressing image: $e');
-    return imageFile; // Return null in case of error
+      final result = await FlutterImageCompress.compressAndGetFile(
+        imageFile.path,
+        imageFile.path,
+        quality: 50, // Adjust the quality as needed
+      );
+      return result != null ? File(result.path) : null;
+    } catch (e) {
+      print('Error compressing image: $e');
+      return imageFile; // Return null in case of error
+    }
   }
-  }
-
-
-
 }
-
-
