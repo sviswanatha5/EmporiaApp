@@ -336,7 +336,7 @@ String getDateDifference(Product product) {
 
   int daysDifference = difference.inDays;
   int hoursDifference = difference.inHours - 24 * daysDifference;
-  int minutesDifference = difference.inMinutes - 60 * hoursDifference;
+  int minutesDifference = difference.inMinutes - 60 * hoursDifference - 1440 * daysDifference;
 
   String days = (daysDifference == 1) ? "day" : "days";
   String hours = (hoursDifference == 1) ? "hour" : "hours";

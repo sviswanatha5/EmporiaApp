@@ -1,8 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_project/components/like_product.dart';
+import 'package:practice_project/screens/for_you_page.dart';
 import 'package:practice_project/screens/product_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import "package:practice_project/dashboard_widgets/favorites.dart";
 
@@ -17,94 +21,44 @@ class SquareTileProduct extends StatefulWidget {
 }
 
 class _SquareTileProductState extends State<SquareTileProduct> {
-  bool liked = false;
+  late bool liked = false;
 
-/* 
+  late List<String> favoriteProductsID;
+
+  late SharedPreferences prefs;
+
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: widget.onTap,
-        child: Container(
-          height: 200,
-          width: 200,
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white),
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.grey[700],
-            image: DecorationImage(
-              image: AssetImage(widget.product.images.first),
-              fit: BoxFit.fill,
-            ),
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Image
-              CachedNetworkImage(
-                imageUrl: widget.product.images.first,
-                fit: BoxFit.cover,
-              ),
+  void initState() {
+    super.initState();
+    initLiked();
+    print(liked);
 
-              // Text overlay
-
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.black.withOpacity(0.7),
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      LikeButton(liked: liked, onTap: () => {toggleLike()}),
-                      Text(
-                        widget.product.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '\$${naturalPrices(widget.product.price)}', // Assuming 'price' is a property of the Product class
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          /*
-        //child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              
-            Text(
-            product.name, 
-            style: const TextStyle(color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold),
-
-          ), 
-          Text(
-            '\$${product.price}',
-            style: const TextStyle(color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.bold),
-          ),
-
-          ],)
-          */
-        )
-        // ),
-
-        );
+    initializeUserData();
   }
-  */
+
+  Future<void> initializeUserData() async {
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(currentUserUid);
+
+    final userSnapshot = await userRef.get();
+
+    if (userSnapshot.exists) {
+      favoriteProductsID =
+          List<String>.from(userSnapshot['favoriteProducts'] ?? []);
+    } else {
+      print('User document does not exist');
+      favoriteProductsID = [];
+    }
+  }
+
+  // Fetch initial value for 'liked' from Firestore
+  Future<void> initLiked() async {
+    bool userLikesProduct = await doesUserLike(widget.product);
+    setState(() {
+      liked = userLikesProduct;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,14 +144,33 @@ class _SquareTileProductState extends State<SquareTileProduct> {
     );
   }
 
-  void toggleLike() {
-    setState(() async {
+  void toggleLike() async {
+    setState(() {
       if (liked == false) {
-        addFavorite(widget.product);
+        addFavorite(
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid),
+          favoriteProductsID,
+          productIDMappings,
+          widget.product,
+        );
+        liked =
+            true; // Update 'liked' immediately when the user likes a product
       } else {
-        removeFavorite(widget.product);
+        removeFavorite(
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid),
+          favoriteProductsID,
+          productIDMappings,
+          widget.product,
+        );
+        liked =
+            false; // Update 'liked' immediately when the user unlikes a product
+
+        prefs.setBool(widget.product.id, liked);
       }
-      liked = !liked;
     });
   }
 }
@@ -216,4 +189,25 @@ String naturalPrices(double price) {
   }
 
   return p;
+}
+
+Future<bool> doesUserLike(Product product) async {
+  String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+  try {
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserUid)
+        .get();
+    if (userSnapshot.exists) {
+      List<String> favoriteProducts =
+          List<String>.from(userSnapshot['favoriteProducts'] ?? []);
+      return favoriteProducts.contains(productIDMappings[product.id]);
+    } else {
+      print('User document does not exist');
+      return false;
+    }
+  } catch (e) {
+    print('Error getting preferences: $e');
+    return false;
+  }
 }

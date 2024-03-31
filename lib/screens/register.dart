@@ -65,7 +65,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           FirebaseAuth user = FirebaseAuth.instance;
 
-          List<bool> preferences = List.generate(9, (index) => false);
+                    List<bool> preferences = List.generate(9, (index) => false);
+
+          List<String> favoriteProducts = [];
 
           FirebaseFirestore.instance
               .collection('users')
@@ -75,7 +77,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'email': user.currentUser!.email,
             'preferences': preferences,
             'firstname': firstNameController.text.trim(),
-            'lastname': lastNameController.text.trim()
+            'lastname': lastNameController.text.trim(),
+            'favoriteProducts' : favoriteProducts
           });
         } else {
           //show error message that passwords aren't the same
