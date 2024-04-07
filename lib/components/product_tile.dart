@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:practice_project/components/delete_button.dart';
 import 'package:practice_project/components/like_product.dart';
 import 'package:practice_project/screens/for_you_page.dart';
 import 'package:practice_project/screens/product_page.dart';
@@ -26,6 +27,9 @@ class _SquareTileProductState extends State<SquareTileProduct> {
   late List<String> favoriteProductsID;
 
   late SharedPreferences prefs;
+
+  String? userEmail = FirebaseAuth.instance.currentUser!.email;
+  
 
   @override
   void initState() {
@@ -116,10 +120,16 @@ class _SquareTileProductState extends State<SquareTileProduct> {
                           ),
                         ),
                         // Like button
-                        LikeButton(
-                          liked: liked,
-                          onTap: () => toggleLike(),
-                        ),
+                        if (userEmail != widget.product.vendor)
+                          LikeButton(
+                            liked: liked,
+                            onTap: () => toggleLike(),
+                          )
+                        else
+                          DeleteButton(
+                            productID: widget.product.id,
+                            onTap: () => deleteProduct(widget.product.id),
+                          ),
                       ],
                     ),
                     SizedBox(height: 0),
@@ -172,6 +182,18 @@ class _SquareTileProductState extends State<SquareTileProduct> {
         prefs.setBool(widget.product.id, liked);
       }
     });
+  }
+
+  void deleteProduct(String productID) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productIDMappings[productID])
+          .delete();
+      print('Product deleted successfully!');
+    } catch (e) {
+      print('Error deleting product: $e');
+    }
   }
 }
 
