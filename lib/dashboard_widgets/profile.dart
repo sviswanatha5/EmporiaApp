@@ -2,6 +2,7 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:practice_project/components/background.dart";
+import "package:practice_project/screens/user_products.dart";
 import "package:url_launcher/url_launcher.dart";
 
 class ProfileWidget extends StatelessWidget {
@@ -110,6 +111,21 @@ class ProfileWidget extends StatelessWidget {
               side: BorderSide(color: Colors.white),
             ),
             child: const Text('Edit Preferences',
+                style: TextStyle(color: Colors.white)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: OutlinedButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => userProducts()));
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+            ),
+            child: const Text('My Listings',
                 style: TextStyle(color: Colors.white)),
           ),
         ),

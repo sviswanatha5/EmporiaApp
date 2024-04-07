@@ -10,7 +10,7 @@ final CollectionReference products =
     FirebaseFirestore.instance.collection('products');
 final String _email = FirebaseAuth.instance.currentUser!.email.toString();
 List<UserDuration> userDurations = [];
-final Map<String, String> productIDMappings = {};
+final  Map<String, String> productIDMappings = {};
 class ForYouPage extends StatefulWidget {
   ForYouPage({Key? key}) : super(key: key);
 
