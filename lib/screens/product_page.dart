@@ -42,6 +42,7 @@ class Product {
 
 final CollectionReference products =
     FirebaseFirestore.instance.collection('products');
+final Map<String, List<String>> userProductsMap = {};
 
 class ProductPage extends StatefulWidget {
   ProductPage({Key? key}) : super(key: key) {
@@ -77,6 +78,11 @@ class _ProductPageState extends State<ProductPage> {
         timeAdded: data['timeAdded'],
         productGenre: List<bool>.from(data['productGenre']),
       ));
+
+      if (userProductsMap.containsKey(data['vendor'])) {
+        userProductsMap[data['vendor']] = [];
+      }
+      userProductsMap[data['vendor']]?.add(documentSnapshot.id);
     }
 
     return productList;
@@ -336,7 +342,8 @@ String getDateDifference(Product product) {
 
   int daysDifference = difference.inDays;
   int hoursDifference = difference.inHours - 24 * daysDifference;
-  int minutesDifference = difference.inMinutes - 60 * hoursDifference - 1440 * daysDifference;
+  int minutesDifference =
+      difference.inMinutes - 60 * hoursDifference - 1440 * daysDifference;
 
   String days = (daysDifference == 1) ? "day" : "days";
   String hours = (hoursDifference == 1) ? "hour" : "hours";

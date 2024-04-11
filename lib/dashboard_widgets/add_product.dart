@@ -4,10 +4,12 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
+import 'package:practice_project/screens/for_you_page.dart';
 import "package:practice_project/screens/product_page.dart";
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:practice_project/components/background.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:practice_project/screens/user_products.dart';
 import 'package:uuid/uuid.dart';
 
 class AddProduct extends StatefulWidget {
@@ -55,6 +57,8 @@ class _AddProductState extends State<AddProduct> {
 
   //Add products to database
 
+  /* 
+
   Future<void> addProduct(Product product) async {
     await products.add({
       'name': product.name,
@@ -67,6 +71,31 @@ class _AddProductState extends State<AddProduct> {
       'timeAdded': product.timeAdded,
       'productGenre': product.productGenre
     });
+  }
+  */
+
+  Future<String> addProduct(Product product) async {
+    try {
+      // Add the product to Firestore
+      DocumentReference docRef = await products.add({
+        'name': product.name,
+        'id': product.id,
+        'description': product.description,
+        'price': product.price,
+        'images': product.images,
+        'vendor': product.vendor,
+        'isLiked': product.isLiked,
+        'timeAdded': product.timeAdded,
+        'productGenre': product.productGenre
+      });
+
+      // Return the document reference
+      return docRef.id;
+    } catch (error) {
+      // Handle errors here
+      print('Error adding product: $error');
+      rethrow; // Re-throw the error for handling in the calling code
+    }
   }
 
   final TextEditingController nameController = TextEditingController();
@@ -344,8 +373,11 @@ class _AddProductState extends State<AddProduct> {
         productGenre: selectedGenres,
       );
 
+      
+
       // Add product to database
-      addProduct(newProduct);
+      productIDMappings[newProduct.id] = await addProduct(newProduct);
+      addUserListing(productIDMappings, newProduct);
 
       // Clear controllers and reset state
       nameController.clear();

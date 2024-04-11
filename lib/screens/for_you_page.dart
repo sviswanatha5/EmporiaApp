@@ -3,6 +3,7 @@ import "package:firebase_analytics/firebase_analytics.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:practice_project/components/product_tile.dart";
+import "package:practice_project/components/user_tile.dart";
 import "package:practice_project/screens/product_page.dart";
 import 'package:practice_project/components/background.dart';
 
@@ -10,7 +11,9 @@ final CollectionReference products =
     FirebaseFirestore.instance.collection('products');
 final String _email = FirebaseAuth.instance.currentUser!.email.toString();
 List<UserDuration> userDurations = [];
-final  Map<String, String> productIDMappings = {};
+final Map<String, String> productIDMappings = {};
+int userCount = 0;
+
 class ForYouPage extends StatefulWidget {
   ForYouPage({Key? key}) : super(key: key);
 
@@ -37,6 +40,8 @@ class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
     super.initState();
     _pageOpenTime = DateTime.now();
     WidgetsBinding.instance?.addObserver(this);
+    updateUserListingsLength();
+    userCount = 0;
   }
 
   @override
@@ -53,6 +58,33 @@ class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
     userDurations.add(UserDuration(_email, duration.inSeconds));
     print(userDurations);
     // You can send this duration to analytics or store it as needed
+  }
+
+  Map<String, int> userListingCount = {};
+
+  Future<void> updateUserListingsLength() async {
+    final usersCollection = FirebaseFirestore.instance.collection('users');
+    final usersSnapshot = await usersCollection.get();
+
+    // Iterate over each user document
+    for (final userDoc in usersSnapshot.docs) {
+      final userUid = userDoc.id;
+      final userListings =
+          userDoc['userListings'] ?? []; // Assume it's a list of strings
+      final userListingsLength = userListings.length;
+
+      // Fetch user's first name and last name
+      final userNameSnapshot = await usersCollection.doc(userUid).get();
+      final firstName = userNameSnapshot['firstname'];
+      final lastName = userNameSnapshot['lastname'];
+
+      // Combine first name and last name to form user name
+      final userName = '$firstName $lastName';
+
+      setState(() {
+        userListingCount[userUid] = userListingsLength;
+      });
+    }
   }
 
   Future<List<Product>> loadUserProducts() async {
@@ -88,6 +120,10 @@ class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final sortedUserUids = userListingCount.keys.toList()
+      ..sort((a, b) => userListingCount[b]!.compareTo(userListingCount[a]!));
+    userCount = 0;
+
     return Scaffold(
       body: Container(
         decoration: gradientDecoration(), // Applying the gradient decoration
@@ -125,7 +161,7 @@ class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
               child: Container(
                 padding: EdgeInsets.all(10), // Add padding around all borders
                 child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2, // Number of columns
                     crossAxisSpacing: 15, // Spacing between columns
                     mainAxisSpacing: 15, // Spacing between rows
@@ -133,28 +169,36 @@ class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
                   ),
                   itemCount: userItems.length,
                   itemBuilder: (context, index) {
-                    return SquareTileProduct(
-                      product: userItems[index],
-                      onTap: () {
-                        analytics.logViewItem(
-                            currency: 'usd',
-                            value: userItems[index].price,
-                            parameters: <String, dynamic>{
-                              'name': userItems[index].name,
-                              'id': userItems[index].id,
-                              'vendor': userItems[index].vendor,
-                              'productGenre':
-                                  userItems[index].productGenre.toString()
-                            });
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailScreen(userItems[index]),
-                          ),
-                        );
-                      },
-                    );
+                    if ((index + 1) % 3 == 0 &&
+                        userCount < sortedUserUids.length) {
+                      return RoundedRectangularFeaturedUser(
+                        userUid: sortedUserUids[userCount++],
+                      );
+                    } else {
+                      print(userCount);
+                      return SquareTileProduct(
+                        product: userItems[index],
+                        onTap: () {
+                          analytics.logViewItem(
+                              currency: 'usd',
+                              value: userItems[index].price,
+                              parameters: <String, dynamic>{
+                                'name': userItems[index].name,
+                                'id': userItems[index].id,
+                                'vendor': userItems[index].vendor,
+                                'productGenre':
+                                    userItems[index].productGenre.toString()
+                              });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductDetailScreen(userItems[index]),
+                            ),
+                          );
+                        },
+                      );
+                    }
                   },
                 ),
               ),

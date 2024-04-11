@@ -10,6 +10,7 @@ import 'package:practice_project/components/my_button.dart';
 import 'package:practice_project/components/my_test_field.dart';
 import 'package:practice_project/components/square_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:practice_project/screens/home_screen.dart';
 import 'package:practice_project/services/aut_services.dart';
 import 'package:practice_project/components/background.dart';
 
@@ -65,9 +66,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           FirebaseAuth user = FirebaseAuth.instance;
 
-                    List<bool> preferences = List.generate(9, (index) => false);
+          List<bool> preferences = List.generate(9, (index) => false);
 
           List<String> favoriteProducts = [];
+          List<String> userListings = [];
 
           FirebaseFirestore.instance
               .collection('users')
@@ -78,8 +80,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'preferences': preferences,
             'firstname': firstNameController.text.trim(),
             'lastname': lastNameController.text.trim(),
-            'favoriteProducts' : favoriteProducts
+            'favoriteProducts': favoriteProducts,
+            'userListings': userListings
           });
+          uidEmailMappings[user.currentUser!.email] = user.currentUser!.uid;
         } else {
           //show error message that passwords aren't the same
           wrongInputMessage("Passwords don't match");
