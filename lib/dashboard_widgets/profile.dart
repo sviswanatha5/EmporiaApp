@@ -119,7 +119,7 @@ class ProfileWidget extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => userProducts()));
+                  MaterialPageRoute(builder: (context) => UserProducts(userUid: FirebaseAuth.instance.currentUser!.uid)));
             },
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.white,

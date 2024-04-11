@@ -6,15 +6,21 @@ import "package:practice_project/components/product_tile.dart";
 import "package:practice_project/screens/for_you_page.dart";
 import "package:practice_project/screens/product_page.dart";
 
-class userProducts extends StatefulWidget {
+
+
+class UserProducts extends StatefulWidget {
+  final String userUid;
+
+  const UserProducts({
+    required this.userUid,
+    Key? key,
+  }) : super(key: key);
+
   @override
-  State<userProducts> createState() => _userProductsState();
+  State<UserProducts> createState() => _UserProductsState();
 }
 
-final CollectionReference products =
-    FirebaseFirestore.instance.collection('products');
-
-class _userProductsState extends State<userProducts> {
+class _UserProductsState extends State<UserProducts> {
   late Stream<List<Product>> _productsStream;
 
   @override
@@ -85,111 +91,124 @@ class _userProductsState extends State<userProducts> {
 
   Stream<List<Product>> loadUserProductsRealTime() {
     return FirebaseFirestore.instance
-        .collection('products')
+        .collection('users')
+        .doc(widget.userUid) // Use the provided user UID
         .snapshots()
         .asyncMap((snapshot) async {
-      final allProducts = await getProducts();
-      final userProducts = await userProductsList(allProducts);
+      final userListingIds = List<String>.from(snapshot['userListings'] ?? []);
+      final userProducts = await getUserProducts(userListingIds);
       return userProducts;
     });
   }
 
-  Future<List<String>> getUserListings() async {
-    try {
-      // Retrieve the document snapshot from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      // Check if the document exists
-      if (!snapshot.exists) {
-        throw Exception('User not found');
-      }
-
-      // Extract user listings from the document data
-      List<String>? userListings = snapshot.data()?['userListings'] != null
-          ? List<String>.from(snapshot.data()?['userListings'])
-          : [];
-
-      return userListings;
-    } catch (e) {
-      // Handle errors
-      print('Error retrieving user listings: $e');
-      rethrow; // Rethrow the exception to be caught by the caller
-    }
-  }
-
-  Future<List<Product>> userProductsList(List<Product> allProducts) async {
+  Future<List<Product>> getUserProducts(List<String> userListingIds) async {
     List<Product> userProducts = [];
-    List<String> userProductIDs = await getUserListings();
-    final String? email = FirebaseAuth.instance.currentUser!.email;
 
-    for (int i = 0; i < allProducts.length; i++) {
-      if (userProductIDs.contains(allProducts[i].id)) {
-        userProducts.add(allProducts[i]);
-      }
-
-      if (allProducts[i].vendor == email &&
-          !userProducts.contains(allProducts[i])) {
-        userProducts.add(allProducts[i]);
+    for (final id in userListingIds) {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('products').doc(id).get();
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        final product = Product(
+          id: data['id'],
+          name: data['name'],
+          description: data['description'],
+          price: data['price'].toDouble(),
+          images: List<String>.from(data['images']),
+          vendor: data['vendor'],
+          isLiked: data['isLiked'],
+          timeAdded: data['timeAdded'],
+          productGenre: List<bool>.from(data['productGenre']),
+        );
+        userProducts.add(product);
       }
     }
 
     return userProducts;
   }
+}
 
-  Future<List<Product>> getProducts() async {
-    QuerySnapshot querySnapshot = await products.get();
 
-    List<Product> productList = [];
-
-    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-      Map<String, dynamic> data =
-          documentSnapshot.data() as Map<String, dynamic>;
-      productList.add(Product(
-        id: data['id'],
-        name: data['name'],
-        description: data['description'],
-        price: data['price'].toDouble(),
-        images: List<String>.from(data['images']),
-        isLiked: data['isLiked'],
-        vendor: data['vendor'],
-        timeAdded: data['timeAdded'],
-        productGenre: List<bool>.from(data['productGenre']),
-      ));
-
-      productIDMappings[data['id']] = documentSnapshot.id;
+Future<void> addUserListing(
+    Map<String, String> productIDMappings, Product product) async {
+  try {
+    // Get the current user reference
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      // Handle the case when no user is signed in
+      throw Exception('No user signed in');
     }
 
-    return productList;
-  }
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
 
-  Future<void> addUserListing(DocumentReference userRef,
-      Map<String, String> productIDMappings, Product product) async {
     List<String> userListings = await getUserListings();
 
     userListings.add(productIDMappings[product.id]!);
     updateUserListings(userRef, userListings);
+  } catch (error) {
+    // Handle errors here
+    print('Error adding user listing: $error');
   }
+}
 
-  Future<void> removeUserListing(DocumentReference userRef,
-      Map<String, String> productIDMappings, Product product) async {
+Future<void> removeUserListing(
+    Map<String, String> productIDMappings, String productId) async {
+  try {
+    // Get the current user reference
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      // Handle the case when no user is signed in
+      throw Exception('No user signed in');
+    }
+
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+
     List<String> userListings = await getUserListings();
 
-    userListings.remove(productIDMappings[product.id]!);
+    userListings.remove(productIDMappings[productId]!);
     updateUserListings(userRef, userListings);
+  } catch (error) {
+    // Handle errors here
+    print('Error adding user listing: $error');
   }
+}
 
-  void updateUserListings(
-      DocumentReference userRef, List<String> userListings) async {
-    try {
-      await userRef.update({'userListings': userListings});
-      print('User favorites updated successfully');
-    } catch (e) {
-      print('Error updating user favorites: $e');
-      // Handle error appropriately, such as showing a snackbar or dialog to the user
+void updateUserListings(
+    DocumentReference userRef, List<String> userListings) async {
+  try {
+    await userRef.update({'userListings': userListings});
+    print('User favorites updated successfully');
+  } catch (e) {
+    print('Error updating user favorites: $e');
+    // Handle error appropriately, such as showing a snackbar or dialog to the user
+  }
+}
+
+Future<List<String>> getUserListings() async {
+  try {
+    // Retrieve the document snapshot from Firestore
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    // Check if the document exists
+    if (!snapshot.exists) {
+      throw Exception('User not found');
     }
+
+    // Extract user listings from the document data
+    List<String>? userListings = snapshot.data()?['userListings'] != null
+        ? List<String>.from(snapshot.data()?['userListings'])
+        : [];
+
+    return userListings;
+  } catch (e) {
+    // Handle errors
+    print('Error retrieving user listings: $e');
+    rethrow; // Rethrow the exception to be caught by the caller
   }
 }

@@ -7,6 +7,7 @@ import 'package:practice_project/components/delete_button.dart';
 import 'package:practice_project/components/like_product.dart';
 import 'package:practice_project/screens/for_you_page.dart';
 import 'package:practice_project/screens/product_page.dart';
+import 'package:practice_project/screens/user_products.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import "package:practice_project/dashboard_widgets/favorites.dart";
@@ -29,7 +30,6 @@ class _SquareTileProductState extends State<SquareTileProduct> {
   late SharedPreferences prefs;
 
   String? userEmail = FirebaseAuth.instance.currentUser!.email;
-  
 
   @override
   void initState() {
@@ -186,10 +186,13 @@ class _SquareTileProductState extends State<SquareTileProduct> {
 
   void deleteProduct(String productID) async {
     try {
+      await removeUserListing(
+          productIDMappings, productID); // Wait for user listings to be updated
       await FirebaseFirestore.instance
           .collection('products')
           .doc(productIDMappings[productID])
           .delete();
+      productIDMappings.remove(productID);
       print('Product deleted successfully!');
     } catch (e) {
       print('Error deleting product: $e');

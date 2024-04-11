@@ -16,6 +16,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+final Map<String?, String> uidEmailMappings = {};
+
 class _HomeScreenState extends State<HomeScreen> {
   final emailController = TextEditingController();
 
@@ -32,16 +34,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
       FirebaseAuth user = FirebaseAuth.instance;
 
-      
-
       FirebaseFirestore.instance
           .collection('users')
           .doc(user.currentUser?.uid)
           .set({
         'uid': user.currentUser?.uid,
         'email': user.currentUser!.email,
-        
       }, SetOptions(merge: true));
+      if (!uidEmailMappings.containsKey(user.currentUser!.email)) {
+        uidEmailMappings[user.currentUser!.email] = user.currentUser!.uid;
+      }
     } on FirebaseAuthException catch (exception) {
       wrongInputMessage(exception.toString());
     }
