@@ -103,6 +103,8 @@ class _AddProductState extends State<AddProduct> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController vendorController = TextEditingController();
 
+  bool _loading = false;
+
   final List<String> genres = [
     "Vintage",
     "Tops",
@@ -140,22 +142,6 @@ class _AddProductState extends State<AddProduct> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              /* 
-              Container(
-                width: 100,
-                height: 300,
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    color: Colors.white,
-                    image: image != null
-                        ? DecorationImage(
-                            image: FileImage(File(image!.path)),
-                            fit: BoxFit.cover)
-                        : null),
-              ),
-              */
-
               Container(
                 width: 100,
                 height: 300,
@@ -272,6 +258,10 @@ class _AddProductState extends State<AddProduct> {
                 ),
                 child: Text('Add Product'),
               ),
+              if (_loading)
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
             ],
           ),
         ),
@@ -343,6 +333,9 @@ class _AddProductState extends State<AddProduct> {
 
   void buttonLogic() async {
     try {
+      setState(() {
+        _loading = true;
+      });
       String dateAdded = DateTime.now().toString();
       String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference reference = FirebaseStorage.instance.ref();
@@ -373,8 +366,6 @@ class _AddProductState extends State<AddProduct> {
         productGenre: selectedGenres,
       );
 
-      
-
       // Add product to database
       productIDMappings[newProduct.id] = await addProduct(newProduct);
       addUserListing(productIDMappings, newProduct);
@@ -386,6 +377,7 @@ class _AddProductState extends State<AddProduct> {
       selectedGenres = List.filled(9, false);
       setState(() {
         image = null;
+        _loading = false;
       });
 
       // Show SnackBar

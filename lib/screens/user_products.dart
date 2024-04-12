@@ -3,6 +3,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:practice_project/components/background.dart";
 import "package:practice_project/components/product_tile.dart";
+import "package:practice_project/components/user_tile.dart";
 import "package:practice_project/screens/for_you_page.dart";
 import "package:practice_project/screens/product_page.dart";
 
@@ -32,6 +33,9 @@ class _UserProductsState extends State<UserProducts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: (widget.userUid == FirebaseAuth.instance.currentUser!.uid)?  Text("Your Products"): Text(getUserFullName(widget.userUid).toString() + "'s Products"),
+      ),
       body: Container(
         decoration: gradientDecoration(),
         child: StreamBuilder<List<Product>>(
