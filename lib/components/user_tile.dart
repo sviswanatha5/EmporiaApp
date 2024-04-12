@@ -81,9 +81,8 @@ class _RoundedRectangularFeaturedUserState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                for (final userUid in sortedUserUids)
                   FutureBuilder<String>(
-                    future: getUserFullName(userUid),
+                    future: getUserFullName(widget.userUid),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return CircularProgressIndicator();
@@ -107,11 +106,12 @@ class _RoundedRectangularFeaturedUserState
     );
   }
 
-  Future<String> getUserFullName(String uid) async {
-    final userNameSnapshot =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    final firstName = userNameSnapshot['firstname'];
-    final lastName = userNameSnapshot['lastname'];
-    return '$firstName $lastName';
-  }
+  
+}
+Future<String> getUserFullName(String uid) async {
+  final userNameSnapshot =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  final firstName = userNameSnapshot['firstname'];
+  final lastName = userNameSnapshot['lastname'];
+  return '$firstName $lastName';
 }
