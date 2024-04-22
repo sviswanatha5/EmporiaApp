@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_project/chat_widgets/user_item.dart';
 import 'package:provider/provider.dart';
@@ -34,15 +36,32 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Messages'),
-        ),
-        body: ListView.separated(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: userData.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 10),
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) => UserItem(user: userData[index])),
-      );
+      appBar: AppBar(
+        title: const Text('Messages'),
+      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection("chat")
+            .where(Filter.or(
+                Filter("buyer",
+                    isEqualTo: FirebaseAuth.instance.currentUser!.email),
+                Filter("vendor",
+                    isEqualTo: FirebaseAuth.instance.currentUser!.email)))
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.hasError) {
+            return const Center(child: Text('No messages yet!'));
+          }
+          return ListView.separated(
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: snapshot.data!.docs.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (context, index) => UserItem(
+                    vendor: snapshot.data!.docs[index].data()["vendor"],
+                    productId: snapshot.data!.docs[index].data()["productId"],
+                  ));
+        },
+      ));
 }

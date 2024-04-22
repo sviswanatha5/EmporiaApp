@@ -144,7 +144,15 @@ class _ProductPageState extends State<ProductPage> {
                           // Otherwise, filter products based on the search query
                           filteredProductList = items.where((product) {
                             // Check if the product name contains the search query
-                            return product.name.toLowerCase().contains(query.toLowerCase()) || product.vendor.toLowerCase().contains(query.toLowerCase()) || product.description.toLowerCase().contains(query.toLowerCase());
+                            return product.name
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase()) ||
+                                product.vendor
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase()) ||
+                                product.description
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase());
                           }).toList();
 
                           print(query);
@@ -316,7 +324,8 @@ class ProductDetailScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChatScreen(
-                                userId: product.vendor,
+                                vendor: product.vendor,
+                                productId: product.id,
                               ),
                             ),
                           )
