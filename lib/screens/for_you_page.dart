@@ -4,6 +4,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:practice_project/components/product_tile.dart";
 import "package:practice_project/components/user_tile.dart";
+import "package:practice_project/screens/product_description_page.dart";
 import "package:practice_project/screens/product_page.dart";
 import 'package:practice_project/components/background.dart';
 

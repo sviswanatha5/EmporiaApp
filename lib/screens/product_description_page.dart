@@ -95,6 +95,7 @@ class ProductDetailScreen extends StatelessWidget {
 
                 MyButton(
                     onTap: () => {
+                          print('Pay button pressed'),
                           initPayment(FirebaseAuth.instance.currentUser!.email,
                               product, context)
                         },
@@ -130,6 +131,7 @@ String getDateDifference(Product product) {
 Future<void> initPayment(
     String? email, Product product, BuildContext context) async {
   try {
+    print("Function entered");
     final response = await http.post(
         Uri.parse(
             "https://us-central1-cs4261assignment1.cloudfunctions.net/stripePaymentIntentRequest"),
@@ -139,7 +141,7 @@ Future<void> initPayment(
         });
 
     final jsonResponse = jsonDecode(response.body);
-    log(jsonResponse.toString());
+    print(jsonResponse.toString());
 
     await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -148,8 +150,10 @@ Future<void> initPayment(
       customerId: jsonResponse['customer'],
       customerEphemeralKeySecret: jsonResponse['ephemeralKey'],
     ));
+    print("Made payment sheet");
 
     await Stripe.instance.presentPaymentSheet();
+    print("done");
 
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Payment is successful')));
