@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '310291668478',
     projectId: 'cs4261assignment1',
     authDomain: 'cs4261assignment1.firebaseapp.com',
+    databaseURL: 'https://cs4261assignment1-default-rtdb.firebaseio.com',
     storageBucket: 'cs4261assignment1.appspot.com',
     measurementId: 'G-MGZWW0CDE5',
   );
@@ -58,16 +59,19 @@ class DefaultFirebaseOptions {
     appId: '1:310291668478:android:9e6d60a7af485c3f4034af',
     messagingSenderId: '310291668478',
     projectId: 'cs4261assignment1',
+    databaseURL: 'https://cs4261assignment1-default-rtdb.firebaseio.com',
     storageBucket: 'cs4261assignment1.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBlGJw-VytkCTVK3t9oyScASzq3sYlkj0Q',
-    appId: '1:310291668478:ios:941b8a2051d2a1b94034af',
+    appId: '1:310291668478:ios:7d5e7fabcff5b5b84034af',
     messagingSenderId: '310291668478',
     projectId: 'cs4261assignment1',
+    databaseURL: 'https://cs4261assignment1-default-rtdb.firebaseio.com',
     storageBucket: 'cs4261assignment1.appspot.com',
-    iosBundleId: 'com.example.practiceProject',
+    iosClientId: '310291668478-oratgcef351dkksc73dlh5nt1n932d24.apps.googleusercontent.com',
+    iosBundleId: 'com.srikarviswanatha.practiceProject',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -75,7 +79,9 @@ class DefaultFirebaseOptions {
     appId: '1:310291668478:ios:f2cab2736a9605df4034af',
     messagingSenderId: '310291668478',
     projectId: 'cs4261assignment1',
+    databaseURL: 'https://cs4261assignment1-default-rtdb.firebaseio.com',
     storageBucket: 'cs4261assignment1.appspot.com',
+    iosClientId: '310291668478-h0oumuaka8odb8r1dirn8gm98b3n6nhp.apps.googleusercontent.com',
     iosBundleId: 'com.example.practiceProject.RunnerTests',
   );
 }

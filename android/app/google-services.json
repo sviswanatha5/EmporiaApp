@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "310291668478",
+    "firebase_url": "https://cs4261assignment1-default-rtdb.firebaseio.com",
     "project_id": "cs4261assignment1",
     "storage_bucket": "cs4261assignment1.appspot.com"
   },
@@ -12,7 +13,12 @@
           "package_name": "com.example.practice_project"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "310291668478-gcnv71unvjdjndiqjgqvom6qsfl0vka9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA4ArFA7gGOhTgtfM7PBA7TUmx7e8qw938"
@@ -20,7 +26,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310291668478-gcnv71unvjdjndiqjgqvom6qsfl0vka9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "310291668478-h0oumuaka8odb8r1dirn8gm98b3n6nhp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.practiceProject.RunnerTests"
+              }
+            }
+          ]
         }
       }
     }
