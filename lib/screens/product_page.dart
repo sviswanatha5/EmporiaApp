@@ -1,6 +1,7 @@
 import "package:cached_network_image/cached_network_image.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_analytics/firebase_analytics.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:practice_project/components/background.dart";
 import 'package:practice_project/components/product_tile.dart';
@@ -324,6 +325,9 @@ class ProductDetailScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChatScreen(
+                                buyer:
+                                    FirebaseAuth.instance.currentUser!.email ??
+                                        "",
                                 vendor: product.vendor,
                                 productId: product.id,
                               ),

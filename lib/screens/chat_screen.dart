@@ -8,9 +8,14 @@ import 'package:practice_project/chat_widgets/message_bubble.dart';
 import 'package:practice_project/model/message.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required this.vendor, required this.productId});
+  const ChatScreen(
+      {super.key,
+      required this.vendor,
+      required this.productId,
+      required this.buyer});
 
   final String vendor;
+  final String buyer;
   final String productId;
 
   @override
@@ -40,11 +45,13 @@ class _ChatScreenState extends State<ChatScreen> {
         .collection("chat")
         .where('productId', isEqualTo: widget.productId)
         .where('vendor', isEqualTo: widget.vendor)
-        .where('buyer', isEqualTo: FirebaseAuth.instance.currentUser!.email)
+        .where('buyer', isEqualTo: widget.buyer)
         .limit(1)
         .get()
         .then((value) => setState(() {
-              docRef = value.docs[0].reference.path;
+              if (value.docs.isNotEmpty) {
+                docRef = value.docs[0].reference.path;
+              }
             }));
   }
 
@@ -142,7 +149,9 @@ class _ChatScreenState extends State<ChatScreen> {
           Column(
             children: [
               Text(
-                widget.vendor,
+                widget.vendor == FirebaseAuth.instance.currentUser!.email
+                    ? widget.buyer
+                    : widget.vendor,
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -157,20 +166,28 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _sendText(BuildContext context) async {
     if (controller.text.isNotEmpty) {
       if (docRef == "none") {
-        FirebaseFirestore.instance.collection('chat').add({
+        await FirebaseFirestore.instance.collection('chat').add({
           "productId": widget.productId,
           "vendor": widget.vendor,
           "buyer": FirebaseAuth.instance.currentUser!.email
-        }).then((value) => setState(() {
-              docRef = value.path;
-            }));
+        }).then((value) => {
+              FirebaseFirestore.instance
+                  .collection("${value.path}/messages")
+                  .add({
+                "content": controller.text,
+                "messageType": "text",
+                "senderId": FirebaseAuth.instance.currentUser!.email,
+                "sentTime": DateTime.now()
+              })
+            });
+      } else {
+        await FirebaseFirestore.instance.collection("$docRef/messages").add({
+          "content": controller.text,
+          "messageType": "text",
+          "senderId": FirebaseAuth.instance.currentUser!.email,
+          "sentTime": DateTime.now()
+        });
       }
-      FirebaseFirestore.instance.collection("$docRef/messages").add({
-        "content": controller.text,
-        "messageType": "text",
-        "senderId": FirebaseAuth.instance.currentUser!.email,
-        "sentTime": DateTime.now()
-      });
       // await FirebaseFirestoreService.addTextMessage(
       //   receiverId: widget.receiverId,
       //   content: controller.text,
