@@ -49,7 +49,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     isEqualTo: FirebaseAuth.instance.currentUser!.email)))
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.hasError) {
+          if (!snapshot.hasData ||
+              snapshot.hasError ||
+              snapshot.data!.docs.isEmpty) {
             return const Center(child: Text('No messages yet!'));
           }
           return ListView.separated(
@@ -59,6 +61,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               separatorBuilder: (context, index) => const SizedBox(height: 10),
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) => UserItem(
+                    buyer: snapshot.data!.docs[index].data()["buyer"],
                     vendor: snapshot.data!.docs[index].data()["vendor"],
                     productId: snapshot.data!.docs[index].data()["productId"],
                   ));

@@ -1,11 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_project/screens/chat_screen.dart';
 
 import '../../model/user.dart';
 
 class UserItem extends StatefulWidget {
-  const UserItem({super.key, required this.vendor, required this.productId});
+  const UserItem(
+      {super.key,
+      required this.vendor,
+      required this.productId,
+      required this.buyer});
   final String vendor;
+  final String buyer;
   final String productId;
 
   @override
@@ -22,6 +28,7 @@ class _UserItemState extends State<UserItem> {
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => ChatScreen(
+                  buyer: widget.buyer,
                   vendor: widget.vendor,
                   productId: widget.productId,
                 ))),
@@ -44,7 +51,9 @@ class _UserItemState extends State<UserItem> {
             ],
           ),
           title: Text(
-            widget.vendor,
+            widget.vendor == FirebaseAuth.instance.currentUser!.email
+                ? widget.buyer
+                : widget.vendor,
             style: const TextStyle(
               color: Colors.black,
               fontSize: 18,
