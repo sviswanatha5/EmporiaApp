@@ -6,6 +6,7 @@ import "package:practice_project/components/product_tile.dart";
 import "package:practice_project/components/user_tile.dart";
 import "package:practice_project/screens/for_you_page.dart";
 import "package:practice_project/screens/product_page.dart";
+import "package:practice_project/screens/product_page_description.dart";
 
 
 

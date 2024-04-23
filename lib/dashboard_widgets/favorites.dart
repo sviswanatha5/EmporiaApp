@@ -5,6 +5,7 @@ import "package:practice_project/components/product_tile.dart";
 import "package:practice_project/screens/for_you_page.dart";
 import "package:practice_project/screens/product_page.dart";
 import "package:practice_project/components/background.dart";
+import "package:practice_project/screens/product_page_description.dart";
 
 class FavoriteProducts extends StatefulWidget {
   const FavoriteProducts({super.key});
@@ -40,36 +41,42 @@ class _FavoriteProductsState extends State<FavoriteProducts> {
     }
   }
 
-  Future<List<Product>> loadFavoriteUserProducts() async {
-    await initializeUserData();
-    final userItems = await getFavoriteProducts();
-    return userItems;
-  }
+  Future<List<Product>> getFavoriteProducts(List<String> favoriteProducts) async {
+    List<Product> userFavoriteProducts = [];
 
-  Future<List<Product>> getFavoriteProducts() async {
-    QuerySnapshot querySnapshot = await products.get();
-
-    List<Product> productList = [];
-
-    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-      if (favoriteProductsID.contains(documentSnapshot.id)) {
-        Map<String, dynamic> data =
-            documentSnapshot.data() as Map<String, dynamic>;
-        productList.add(Product(
+    for (final id in favoriteProducts) {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('products').doc(id).get();
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        final product = Product(
           id: data['id'],
           name: data['name'],
           description: data['description'],
           price: data['price'].toDouble(),
           images: List<String>.from(data['images']),
-          isLiked: data['isLiked'],
           vendor: data['vendor'],
+          isLiked: data['isLiked'],
           timeAdded: data['timeAdded'],
           productGenre: List<bool>.from(data['productGenre']),
-        ));
+        );
+        userFavoriteProducts.add(product);
       }
     }
 
-    return productList;
+    return userFavoriteProducts;
+  }
+
+  Stream<List<Product>> loadUserFavoriteProductsRealTime() {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid) // Use the provided user UID
+        .snapshots()
+        .asyncMap((snapshot) async {
+      final favoriteProducts = List<String>.from(snapshot['favoriteProducts'] ?? []);
+      final userProducts = await getFavoriteProducts(favoriteProducts);
+      return userProducts;
+    });
   }
 
   @override
@@ -77,8 +84,8 @@ class _FavoriteProductsState extends State<FavoriteProducts> {
     return Scaffold(
       body: Container(
         decoration: gradientDecoration(), // Applying the gradient decoration
-        child: FutureBuilder<List<Product>>(
-          future: loadFavoriteUserProducts(),
+        child: StreamBuilder<List<Product>>(
+          stream: loadUserFavoriteProductsRealTime(),
           builder:
               (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
