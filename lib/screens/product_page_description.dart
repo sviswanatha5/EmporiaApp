@@ -83,6 +83,7 @@ class ProductDetailScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChatScreen(
+                                buyer: FirebaseAuth.instance.currentUser!.email ?? "",
                                 vendor: product.vendor,
                                 productId: product.id,
                               ),

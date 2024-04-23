@@ -28,7 +28,8 @@ class Message {
 
 enum MessageType {
   text,
-  image;
+  image,
+  payment;
 
   String toJson() => name;
 
