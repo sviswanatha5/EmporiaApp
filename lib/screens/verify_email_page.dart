@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_project/screens/dashboard_screen.dart';
+import 'package:practice_project/screens/register.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   @override
@@ -63,6 +64,20 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   Widget build(BuildContext context) => isEmailVerified
       ? DashboardScreen()
       : Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                // Navigating back to the RegisterScreen when pressed
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterScreen(onTap: () {  },)),
+                );
+              },
+            ),
+            title: Text("Verify Your Email"),
+            backgroundColor: Color(0xFF9A69AB), // Use the same purple color for consistency
+          ),
           body: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
