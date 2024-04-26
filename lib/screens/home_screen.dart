@@ -49,6 +49,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     await analytics.logLogin();
   }
+  void sendPasswordResetEmail() async {
+    String email = emailController.text.trim();
+    if (email.isEmpty) {
+      // Show an error message if the email field is empty
+      wrongInputMessage("Please enter your email address to reset your password.");
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      // Show a confirmation message
+      wrongInputMessage("A password reset link has been sent to $email");
+    } on FirebaseAuthException catch (e) {
+      // Handle error: e.message contains the error message
+      wrongInputMessage(e.message ?? "An error occurred. Please try again later.");
+    }
+  }
 
   void wrongInputMessage(String message) {
     showDialog(
@@ -143,7 +160,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-
+                // Forgot Password Button
+                TextButton(
+                  onPressed: sendPasswordResetEmail,
+                  child: Text(
+                    'Forgot Password?',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
                 SizedBox(height: 30),
                 // Registration prompt
                 Row(
