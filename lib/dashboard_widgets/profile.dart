@@ -88,6 +88,35 @@ class ProfileWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: OutlinedButton(
+               onPressed: () async {
+              try {
+                await FirebaseAuth.instance.sendPasswordResetEmail(email: _email);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Password reset email has been sent to $_email"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } on FirebaseAuthException catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(e.message ?? "An error occurred. Please try again."),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+            ),
+            child: const Text('Reset Password',
+                style: TextStyle(color: Colors.white)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: OutlinedButton(
             onPressed: () {
               // TODO
             },
@@ -276,7 +305,7 @@ class _ButtonGridScreenState extends State<ButtonGridScreen> {
       ),
     );
   }
-
+  
   Future<List<bool>> getUserPreferences() async {
     // Get the current user's UID
     String uid = FirebaseAuth.instance.currentUser!.uid;
