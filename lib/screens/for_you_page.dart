@@ -4,7 +4,6 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_analytics/firebase_analytics.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
-import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 import "package:practice_project/components/product_tile.dart";
 import "package:practice_project/components/user_tile.dart";
 import "package:practice_project/screens/product_page.dart";
@@ -151,21 +150,6 @@ class _ForYouPageState extends State<ForYouPage> with WidgetsBindingObserver {
     final sortedUserUids = computeSortedUserIds(userListingCount);
     userCount = 0;
 
-    List<StairedGridTile> generatePattern(bool condition) {
-      if (condition) {
-        return [
-          const StairedGridTile(0.5, 0.85),
-          const StairedGridTile(0.5, 0.85),
-          const StairedGridTile(1.0, 4.5),
-        ];
-      } else {
-        // Define a different pattern for the alternate condition
-        return [
-          const StairedGridTile(0.5, 0.85),
-          const StairedGridTile(0.5, 0.85),
-        ];
-      }
-    }
 
     int calculateItemCount(int totalItems) {
       // Number of rows with small tiles (2 items each)

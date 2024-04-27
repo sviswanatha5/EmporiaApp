@@ -24,7 +24,7 @@ class _UserProductsState extends State<UserProducts> {
   late Stream<List<Product>> _productsStream;
  
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     _productsStream = loadUserProductsRealTime();
   }
@@ -33,7 +33,7 @@ class _UserProductsState extends State<UserProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: (widget.userUid == FirebaseAuth.instance.currentUser!.uid)?  Text("Your Products"): Text(getUserFullName(widget.userUid).toString() + "'s Products"),
+        title: (widget.userUid == FirebaseAuth.instance.currentUser!.uid)?  const Text("Your Products"): const Text(" "),
       ),
       body: Container(
         decoration: gradientDecoration(),
