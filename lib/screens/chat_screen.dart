@@ -95,8 +95,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           message.messageType == MessageType.text;
                       final isPaymentMessage =
                           message.messageType == MessageType.payment;
+                      final isPaymentConfirmation =  message.messageType == MessageType.paymentConfirmation;
 
-                      return isTextMessage
+                      return isTextMessage || isPaymentConfirmation
                           ? MessageBubble(
                               isMe: isMe,
                               message: message,
@@ -104,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               isPayment: false,
                               isVendor: widget.vendor ==
                                   FirebaseAuth.instance.currentUser?.email,
-                              buyer: widget.buyer)
+                              buyer: widget.buyer, productId: widget.productId, vendor: widget.vendor, isPaymentConfirmation: isPaymentConfirmation)
                           : isPaymentMessage
                               ? MessageBubble(
                                   isMe: isMe,
@@ -113,7 +114,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                   isPayment: true,
                                   isVendor: widget.vendor ==
                                       FirebaseAuth.instance.currentUser?.email,
-                                  buyer: widget.buyer)
+                                  buyer: widget.buyer, productId: widget.productId, vendor: widget.vendor, isPaymentConfirmation: isPaymentConfirmation,
+                                )
                               : MessageBubble(
                                   isMe: isMe,
                                   message: message,
@@ -121,7 +123,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                   isPayment: false,
                                   isVendor: widget.vendor ==
                                       FirebaseAuth.instance.currentUser?.email,
-                                  buyer: widget.buyer);
+                                  buyer: widget.buyer, productId: widget.productId,
+                                  vendor: widget.vendor,
+                                  isPaymentConfirmation: isPaymentConfirmation
+                                );
                     },
                   );
                 },
@@ -141,7 +146,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   radius: 20,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () => _sendText(context, false, controller.text, false),
+                    onPressed: () =>
+                        _sendText(context, false, controller.text, false),
                   ),
                 ),
                 const SizedBox(width: 5),
@@ -234,42 +240,48 @@ class _ChatScreenState extends State<ChatScreen> {
         elevation: 0,
         foregroundColor: Colors.black,
         backgroundColor: Colors.transparent,
-        title: Row(
-          children: [
-            const CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-              radius: 20,
-            ),
-            const SizedBox(width: 10),
-            Column(
-              children: [
-                Text(
-                  widget.vendor == FirebaseAuth.instance.currentUser!.email
-                      ? widget.buyer
-                      : widget.vendor,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+        title: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              const CircleAvatar(
+                backgroundImage: NetworkImage(
+                    'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                radius: 20,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.vendor == FirebaseAuth.instance.currentUser!.email
+                        ? widget.buyer
+                        : widget.vendor,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       );
 
-  Future<void> _sendText(
-      BuildContext context, bool isPayment, String content, bool isImage) async {
+  Future<void> _sendText(BuildContext context, bool isPayment, String content,
+      bool isImage) async {
     if (docRef == "none") {
+      print("new docref");
       final checksAndBalances = await FirebaseFirestore.instance
           .collection("chat")
-          .where(Filter.or(
+          .where(Filter.and(
               Filter("buyer",
                   isEqualTo: FirebaseAuth.instance.currentUser!.email),
               Filter("vendor",
-                  isEqualTo: FirebaseAuth.instance.currentUser!.email)))
+                  isEqualTo: widget.vendor),
+                  Filter("productId", isEqualTo: widget.productId)))
           .get();
       if (checksAndBalances.docs.isEmpty) {
         final newChatRef =
@@ -285,7 +297,11 @@ class _ChatScreenState extends State<ChatScreen> {
             .collection("${newChatRef.path}/messages")
             .add({
           "content": content,
-          "messageType": isPayment ? "payment" : isImage ? "image" :"text",
+          "messageType": isPayment
+              ? "payment"
+              : isImage
+                  ? "image"
+                  : "text",
           "senderId": FirebaseAuth.instance.currentUser!.email,
           "sentTime": DateTime.now(),
         });
@@ -293,7 +309,11 @@ class _ChatScreenState extends State<ChatScreen> {
     } else {
       await FirebaseFirestore.instance.collection("$docRef/messages").add({
         "content": content,
-        "messageType": isPayment ? "payment" : isImage? "image" :  "text",
+        "messageType": isPayment
+            ? "payment"
+            : isImage
+                ? "image"
+                : "text",
         "senderId": FirebaseAuth.instance.currentUser!.email,
         "sentTime": DateTime.now()
       });
