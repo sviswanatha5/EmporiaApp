@@ -74,7 +74,7 @@ class ProductDetailScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
 
-                const SizedBox(height: 50),
+                const SizedBox(height: 180),
 
                 MyButton(
                     onTap: () => {
@@ -92,17 +92,8 @@ class ProductDetailScreen extends StatelessWidget {
                         },
                     text: "Connect"),
 
-                const SizedBox(height: 50),
+                const SizedBox(height: 150),
 
-                MyButton(
-                    onTap: () => {
-                          print('Pay button pressed'),
-                          initPayment(FirebaseAuth.instance.currentUser!.email,
-                              product, context)
-                        },
-                    text: "Pay"),
-
-                const SizedBox(height: 200),
               ],
             ),
           ),

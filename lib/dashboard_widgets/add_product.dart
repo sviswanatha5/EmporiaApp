@@ -55,24 +55,6 @@ class _AddProductState extends State<AddProduct> {
   final CollectionReference products =
       FirebaseFirestore.instance.collection('products');
 
-  //Add products to database
-
-  /* 
-
-  Future<void> addProduct(Product product) async {
-    await products.add({
-      'name': product.name,
-      'id': product.id,
-      'description': product.description,
-      'price': product.price,
-      'images': product.images,
-      'vendor': product.vendor,
-      'isLiked': product.isLiked,
-      'timeAdded': product.timeAdded,
-      'productGenre': product.productGenre
-    });
-  }
-  */
 
   Future<String> addProduct(Product product) async {
     try {
@@ -269,67 +251,6 @@ class _AddProductState extends State<AddProduct> {
     ));
   }
 
-  /* 
-
-  void buttonLogic() async {
-    await Future.delayed(const Duration(seconds: 2));
-
-    Reference reference = FirebaseStorage.instance.ref();
-    Reference refImages = reference.child('images');
-
-    String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-    Reference uploadImage = refImages.child(imageFileName);
-
-    try {
-      await uploadImage.putFile(File(image!.path));
-      imageUrl = await uploadImage.getDownloadURL();
-    } catch (error) {}
-
-    String dateAdded = DateTime.now().toString();
-
-    //debugPrint(priceController.toString());
-    Product newProduct = Product(
-        name: nameController.text.trim(),
-        price: double.parse(priceController.text.trim()),
-        description: descriptionController.text.trim(),
-        vendor: FirebaseAuth.instance.currentUser!.email.toString(),
-        isLiked: false,
-        images: [imageUrl],
-        id: "product${counter++}",
-        timeAdded: dateAdded,
-        productGenre: selectedGenres);
-
-    addProduct(newProduct);
-
-    nameController.clear();
-    descriptionController.clear();
-    priceController.clear();
-
-    selectedGenres = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
-
-    setState(() {
-      image = null;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Product Added!'),
-        duration: Duration(milliseconds: 900),
-      ),
-    );
-  }
-  */
 
   void buttonLogic() async {
     try {
@@ -337,7 +258,7 @@ class _AddProductState extends State<AddProduct> {
         _loading = true;
       });
       String dateAdded = DateTime.now().toString();
-      String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+      String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
       Reference reference = FirebaseStorage.instance.ref();
       Reference refImages = reference.child('images');
       Reference uploadImage = refImages.child(imageFileName);

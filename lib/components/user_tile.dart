@@ -18,8 +18,6 @@ class RoundedRectangularFeaturedUser extends StatefulWidget {
 class _RoundedRectangularFeaturedUserState
     extends State<RoundedRectangularFeaturedUser> {
   Map<String, int> userListingCount = {};
-  
-
 
   @override
   void initState() {
@@ -58,6 +56,8 @@ class _RoundedRectangularFeaturedUserState
     final sortedUserUids = userListingCount.keys.toList()
       ..sort((a, b) => userListingCount[b]!.compareTo(userListingCount[a]!));
 
+    const SizedBox(height: 10);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -70,8 +70,8 @@ class _RoundedRectangularFeaturedUserState
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          width: 100,
-          height: 400,
+          width: 400,
+          height: 50,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.white, width: 2),
@@ -81,23 +81,23 @@ class _RoundedRectangularFeaturedUserState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                  FutureBuilder<String>(
-                    future: getUserFullName(widget.userUid),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}',
-                            style: TextStyle(color: Colors.black));
-                      } else {
-                        return Text(
-                          'Check out ${snapshot.data}\'s Products!',
-                          style: TextStyle(color: Colors.black),
-                          textAlign: TextAlign.center,
-                        );
-                      }
-                    },
-                  ),
+                FutureBuilder<String>(
+                  future: getUserFullName(widget.userUid),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}',
+                          style: TextStyle(color: Colors.black));
+                    } else {
+                      return Text(
+                        'Check out ${snapshot.data}\'s Products!',
+                        style: TextStyle(color: Colors.black),
+                        textAlign: TextAlign.center,
+                      );
+                    }
+                  },
+                ),
               ],
             ),
           ),
@@ -105,9 +105,8 @@ class _RoundedRectangularFeaturedUserState
       ),
     );
   }
-
-  
 }
+
 Future<String> getUserFullName(String uid) async {
   final userNameSnapshot =
       await FirebaseFirestore.instance.collection('users').doc(uid).get();
