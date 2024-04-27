@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:practice_project/chat_widgets/custom_text_form_field.dart';
 import 'package:practice_project/chat_widgets/message_bubble.dart';
 import 'package:practice_project/model/message.dart';
@@ -30,6 +33,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late String docRef = "none";
   final controller = TextEditingController();
+  File? image;
 
   @override
   void initState() {
@@ -98,9 +102,9 @@ class _ChatScreenState extends State<ChatScreen> {
                               message: message,
                               isImage: false,
                               isPayment: false,
-                              isVendor: widget.vendor == FirebaseAuth.instance.currentUser?.email,
-                              buyer: widget.buyer
-                            )
+                              isVendor: widget.vendor ==
+                                  FirebaseAuth.instance.currentUser?.email,
+                              buyer: widget.buyer)
                           : isPaymentMessage
                               ? MessageBubble(
                                   isMe: isMe,
@@ -109,9 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   isPayment: true,
                                   isVendor: widget.vendor ==
                                       FirebaseAuth.instance.currentUser?.email,
-                                  buyer: widget.buyer
-                      
-                                )
+                                  buyer: widget.buyer)
                               : MessageBubble(
                                   isMe: isMe,
                                   message: message,
@@ -119,8 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   isPayment: false,
                                   isVendor: widget.vendor ==
                                       FirebaseAuth.instance.currentUser?.email,
-                                  buyer: widget.buyer
-                                );
+                                  buyer: widget.buyer);
                     },
                   );
                 },
@@ -140,7 +141,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   radius: 20,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () => _sendText(context, false, controller.text),
+                    onPressed: () => _sendText(context, false, controller.text, false),
+                  ),
+                ),
+                const SizedBox(width: 5),
+                CircleAvatar(
+                  backgroundColor: Color(0xff703efe),
+                  radius: 20,
+                  child: IconButton(
+                    icon: const Icon(Icons.image, color: Colors.white),
+                    onPressed: () => sendImageMessage(context, false),
                   ),
                 ),
                 const SizedBox(width: 5),
@@ -186,7 +196,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   TextButton(
                                     onPressed: () {
                                       if (price != null) {
-                                        _sendText(context, true, price!);
+                                        _sendText(context, true, price!, false);
                                         print("Payment sent");
                                         // Validate the input here if needed
                                         Navigator.of(context).pop();
@@ -251,34 +261,45 @@ class _ChatScreenState extends State<ChatScreen> {
       );
 
   Future<void> _sendText(
-      BuildContext context, bool isPayment, String content) async {
-   
-      if (docRef == "none") {
+      BuildContext context, bool isPayment, String content, bool isImage) async {
+    if (docRef == "none") {
+      final checksAndBalances = await FirebaseFirestore.instance
+          .collection("chat")
+          .where(Filter.or(
+              Filter("buyer",
+                  isEqualTo: FirebaseAuth.instance.currentUser!.email),
+              Filter("vendor",
+                  isEqualTo: FirebaseAuth.instance.currentUser!.email)))
+          .get();
+      if (checksAndBalances.docs.isEmpty) {
         final newChatRef =
             await FirebaseFirestore.instance.collection('chat').add({
           "productId": widget.productId,
           "vendor": widget.vendor,
           "buyer": FirebaseAuth.instance.currentUser!.email
         });
+        setState(() {
+          docRef = newChatRef.path;
+        });
         await FirebaseFirestore.instance
-            .collection("$newChatRef/messages")
+            .collection("${newChatRef.path}/messages")
             .add({
           "content": content,
-          "messageType": isPayment ? "payment" : "text",
+          "messageType": isPayment ? "payment" : isImage ? "image" :"text",
           "senderId": FirebaseAuth.instance.currentUser!.email,
           "sentTime": DateTime.now(),
         });
-      } else {
-        await FirebaseFirestore.instance.collection("$docRef/messages").add({
-          "content": content,
-          "messageType": isPayment ? "payment" : "text",
-          "senderId": FirebaseAuth.instance.currentUser!.email,
-          "sentTime": DateTime.now()
-        });
       }
-      controller.clear();
-      FocusScope.of(context).unfocus();
-    
+    } else {
+      await FirebaseFirestore.instance.collection("$docRef/messages").add({
+        "content": content,
+        "messageType": isPayment ? "payment" : isImage? "image" :  "text",
+        "senderId": FirebaseAuth.instance.currentUser!.email,
+        "sentTime": DateTime.now()
+      });
+    }
+    controller.clear();
+    FocusScope.of(context).unfocus();
   }
 
   Future<void> sendPaymentRequest(
@@ -316,5 +337,50 @@ class _ChatScreenState extends State<ChatScreen> {
             content: Text('Error occured: ${error.error.localizedMessage}')));
       }
     }
+  }
+
+  Future<String> addImage(File? image) async {
+    String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference reference = FirebaseStorage.instance.ref();
+    Reference refImages = reference.child('images');
+    Reference uploadImage = refImages.child(imageFileName);
+
+    UploadTask uploadTask = uploadImage.putFile(File(image!.path));
+    TaskSnapshot uploadSnapshot = await uploadTask;
+    String imageUrl = await uploadSnapshot.ref.getDownloadURL();
+
+    return imageUrl;
+  }
+
+  Future<void> pickImagesFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    XFile? pickedFile;
+
+    try {
+      pickedFile = await picker.pickImage(
+        source: ImageSource
+            .gallery, // Use ImageSource.camera for capturing from camera
+      );
+    } catch (e) {
+      print("Error picking image: $e");
+    }
+
+    if (pickedFile != null) {
+      setState(() {
+        image = File(pickedFile!.path);
+      });
+    }
+  }
+
+  Future<String> obtainImageUrl() async {
+    pickImagesFromGallery();
+    String imgFile = await addImage(image);
+    return imgFile;
+  }
+
+  void sendImageMessage(BuildContext context, bool isPayment) async {
+    String imageUrl = await obtainImageUrl();
+
+    _sendText(context, isPayment, imageUrl, true);
   }
 }

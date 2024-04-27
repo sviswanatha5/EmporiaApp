@@ -8,8 +8,6 @@ import "package:practice_project/screens/for_you_page.dart";
 import "package:practice_project/screens/product_page.dart";
 import "package:practice_project/screens/product_page_description.dart";
 
-
-
 class UserProducts extends StatefulWidget {
   final String userUid;
 
@@ -24,9 +22,9 @@ class UserProducts extends StatefulWidget {
 
 class _UserProductsState extends State<UserProducts> {
   late Stream<List<Product>> _productsStream;
-
+ 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     _productsStream = loadUserProductsRealTime();
   }
@@ -132,7 +130,6 @@ class _UserProductsState extends State<UserProducts> {
     return userProducts;
   }
 }
-
 
 Future<void> addUserListing(
     Map<String, String> productIDMappings, Product product) async {

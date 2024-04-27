@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -76,12 +73,24 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBlGJw-VytkCTVK3t9oyScASzq3sYlkj0Q',
-    appId: '1:310291668478:ios:f2cab2736a9605df4034af',
+    appId: '1:310291668478:ios:941b8a2051d2a1b94034af',
     messagingSenderId: '310291668478',
     projectId: 'cs4261assignment1',
     databaseURL: 'https://cs4261assignment1-default-rtdb.firebaseio.com',
     storageBucket: 'cs4261assignment1.appspot.com',
-    iosClientId: '310291668478-h0oumuaka8odb8r1dirn8gm98b3n6nhp.apps.googleusercontent.com',
-    iosBundleId: 'com.example.practiceProject.RunnerTests',
+    iosClientId: '310291668478-s7c9sltdfnnmc3s9fp7ji6mdr3gdvdio.apps.googleusercontent.com',
+    iosBundleId: 'com.example.practiceProject',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDZ-GAVIswE76xbSM82ORpfqh_NmMP1nJA',
+    appId: '1:310291668478:web:e5316745f581c3f04034af',
+    messagingSenderId: '310291668478',
+    projectId: 'cs4261assignment1',
+    authDomain: 'cs4261assignment1.firebaseapp.com',
+    databaseURL: 'https://cs4261assignment1-default-rtdb.firebaseio.com',
+    storageBucket: 'cs4261assignment1.appspot.com',
+    measurementId: 'G-FTJZ66BTYY',
+  );
+
 }

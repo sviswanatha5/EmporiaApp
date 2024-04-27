@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:intl/intl.dart';
 import '../../model/message.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,7 +31,7 @@ class MessageBubble extends StatelessWidget {
         alignment: isMe ? Alignment.topLeft : Alignment.topRight,
         child: Container(
           decoration: BoxDecoration(
-            color: isMe ? Color(0xff703efe) : Colors.grey,
+            color: isMe ? Colors.grey : Colors.blue,
             borderRadius: isMe
                 ? const BorderRadius.only(
                     topRight: Radius.circular(30),
@@ -61,8 +64,27 @@ class MessageBubble extends StatelessWidget {
                       ),
                     )
                   : !isPayment
-                      ? Text(message.content,
-                          style: const TextStyle(color: Colors.white))
+                      ? Column(
+                          crossAxisAlignment: isMe
+                              ? CrossAxisAlignment.start
+                              : CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              message.content,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16, // Adjust the font size as needed
+                              ),
+                            ),
+                            Text(
+                              formatTime(message.sentTime),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        )
                       : !isVendor
                           ? Container(
                               decoration: BoxDecoration(
@@ -84,6 +106,7 @@ class MessageBubble extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              
                             )
                           : Container(
                               decoration: BoxDecoration(
@@ -106,6 +129,18 @@ class MessageBubble extends StatelessWidget {
           ),
         ),
       );
+}
+
+void _sendConfirmationMessage(BuildContext context, String message) {
+  String docRef = ModalRoute.of(context)!.settings.arguments
+      as String; // Get the docRef from the route arguments
+
+  FirebaseFirestore.instance.collection("$docRef/messages").add({
+    "content": message,
+    "messageType": "text",
+    "senderId": FirebaseAuth.instance.currentUser!.email,
+    "sentTime": DateTime.now()
+  });
 }
 
 Future<void> initPayment(
@@ -137,10 +172,18 @@ Future<void> initPayment(
 
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Payment is successful')));
+
+    String confirmationMessage = 'Payment of \$$price successful!';
+    //_sendConfirmationMessage(context, confirmationMessage);
   } catch (error) {
     if (error is StripeException) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Error occured: ${error.error.localizedMessage}')));
     }
   }
+}
+
+String formatTime(DateTime dateTime) {
+  final formattedTime = DateFormat('MM/dd hh:mm a').format(dateTime);
+  return formattedTime;
 }

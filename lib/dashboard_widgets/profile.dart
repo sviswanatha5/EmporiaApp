@@ -1,9 +1,13 @@
+import "dart:convert";
+
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:flutter_stripe/flutter_stripe.dart";
 import "package:practice_project/components/background.dart";
 import "package:practice_project/screens/user_products.dart";
 import "package:url_launcher/url_launcher.dart";
+import 'package:http/http.dart' as http;
 
 class ProfileWidget extends StatelessWidget {
   final String _email = FirebaseAuth.instance.currentUser!.email.toString();
@@ -141,6 +145,19 @@ class ProfileWidget extends StatelessWidget {
             ),
             child:
                 const Text('FeedBack!', style: TextStyle(color: Colors.white)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: OutlinedButton(
+            onPressed: () {
+              createStripeAccount(_email);
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+            ),
+            child: const Text('Create Stripe Account', style: TextStyle(color: Colors.white)),
           ),
         ),
         Padding(
@@ -316,3 +333,36 @@ class _ButtonGridScreenState extends State<ButtonGridScreen> {
     }
   }
 }
+
+Future<void> createStripeAccount(String email) async {
+    // Replace 'your-cloud-function-url' with the URL of your Firebase Cloud Function
+    const cloudFunctionUrl =
+        'https://us-central1-cs4261assignment1.cloudfunctions.net/createStripeAccount';
+
+    try {
+      final response = await http.post(
+        Uri.parse(cloudFunctionUrl),
+        
+        body: jsonEncode(<String, String>{
+          'email': email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Stripe account created successfully
+        print('Stripe account created successfully');
+        final responseData = jsonDecode(response.body);
+        final accountId = responseData['accountId'];
+        print('Stripe Account ID: $accountId');
+      } else {
+        // Failed to create Stripe account
+        print('Failed to create Stripe account');
+        print('Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (error) {
+      // Error occurred while making the request
+      print('Error creating Stripe account: $error');
+    }
+  }
+
